@@ -1,0 +1,27 @@
+
+selectlistskin.png
+size: 1024, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+background
+  rotate: false
+  xy: 1, 504
+  size: 862, 360
+  orig: 862, 360
+  offset: 0, 0
+  index: -1
+font
+  rotate: false
+  xy: 1, 455
+  size: 506, 47
+  orig: 506, 47
+  offset: 0, 0
+  index: -1
+white-pixel
+  rotate: false
+  xy: 865, 863
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1

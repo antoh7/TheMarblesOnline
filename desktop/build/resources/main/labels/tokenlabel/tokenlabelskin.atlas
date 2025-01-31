@@ -1,0 +1,13 @@
+
+tokenlabelskin.png
+size: 1024, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+font
+  rotate: false
+  xy: 1, 1
+  size: 505, 48
+  orig: 505, 48
+  offset: 0, 0
+  index: -1
