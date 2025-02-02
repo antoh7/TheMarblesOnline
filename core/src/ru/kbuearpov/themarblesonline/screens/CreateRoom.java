@@ -28,6 +28,7 @@ import ru.kbuearpov.themarblesonline.ClientType;
 import ru.kbuearpov.themarblesonline.EntryPoint;
 import ru.kbuearpov.themarblesonline.Message;
 import ru.kbuearpov.themarblesonline.MessageType;
+import ru.kbuearpov.themarblesonline.utils.PreGameStartedUtils;
 
 public class CreateRoom implements Screen {
 
@@ -150,17 +151,22 @@ public class CreateRoom implements Screen {
 
                 try {
                     entryPoint.serverConnection.connect();
-                } catch (WebSocketException ignore) {}
+                } catch (WebSocketException webSocketException) {
+                    return;
+                }
+
+                entryPoint.clientType = ClientType.INITIATOR;
+                entryPoint.currentRoomId = PreGameStartedUtils.generateRoomId();
 
                 Message createMessage = new Message();
 
-                createMessage.setRoomId("adhshbaa");
+                createMessage.setRoomId(entryPoint.currentRoomId);
                 createMessage.setMessageType(MessageType.ROOM_INIT);
                 createMessage.setClientType(ClientType.INITIATOR);
 
                 entryPoint.serverConnection.sendText(gson.toJson(createMessage));
 
-                //entryPoint.setScreen(entryPoint.room);
+                entryPoint.setScreen(entryPoint.room);
             }
         });
     }

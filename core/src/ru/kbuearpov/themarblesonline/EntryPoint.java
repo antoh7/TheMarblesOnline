@@ -6,7 +6,6 @@ import static com.badlogic.gdx.Gdx.files;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Null;
 import com.neovisionaries.ws.client.WebSocket;
 
 import ru.kbuearpov.themarblesonline.screens.CreateRoom;
@@ -15,16 +14,6 @@ import ru.kbuearpov.themarblesonline.screens.JoinRoom;
 import ru.kbuearpov.themarblesonline.screens.MainMenu;
 import ru.kbuearpov.themarblesonline.screens.Room;
 import ru.kbuearpov.themarblesonline.screens.VictoryScreen;
-
-import java.net.ServerSocket;
-import java.net.Socket;
-
-/** Entrypoint of the game. When app starts, screens, backends, batches initialization occurs here.
- * @see Socket
- * @see ServerSocket
- * @see com.badlogic.gdx.Screen
- * @see com.badlogic.gdx.graphics.g2d.SpriteBatch
- */
 
  public class EntryPoint extends Game {
 
@@ -38,19 +27,13 @@ import java.net.Socket;
 
     public SpriteBatch batch;
 
-    // TODO удалить
-    @Null
-    public ServerSocket server;
-    public Socket client;
-
     public WebSocket serverConnection;
 
-    //invite token
-    @Null
-    public String inviteToken;
+    // id комнаты
+    public String currentRoomId;
 
-    //device state
-    public String deviceState;
+    public String clientType;
+
 
 
     @SuppressWarnings("NewApi")

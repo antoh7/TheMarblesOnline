@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class  GameUtils {
 
-    public static void setActorVisualProps(Actor actor, boolean visible){
+    public static void setActorVisible(Actor actor, boolean visible){
         // makes actor visible/invisible
         actor.setVisible(visible);
     }

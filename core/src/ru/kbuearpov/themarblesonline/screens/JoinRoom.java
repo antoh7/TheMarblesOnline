@@ -157,6 +157,7 @@ public class JoinRoom implements Screen {
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 // TODO подсоединение к комнате
+
                 try {
                     entryPoint.serverConnection = new WebSocketFactory()
                             .createSocket("ws://localhost/connection/new");
@@ -170,19 +171,23 @@ public class JoinRoom implements Screen {
 
                 try {
                     entryPoint.serverConnection.connect();
-                } catch (WebSocketException ignore) {
+                } catch (WebSocketException webSocketException) {
                     return;
                 }
 
+                entryPoint.currentRoomId = roomIdInput.getText();
+                System.out.println(entryPoint.currentRoomId);
+                entryPoint.clientType = ClientType.JOINER;
+
                 Message joinMessage = new Message();
 
-                joinMessage.setRoomId(roomIdInput.getMessageText());
+                joinMessage.setRoomId(entryPoint.currentRoomId);
                 joinMessage.setMessageType(MessageType.ROOM_JOIN);
                 joinMessage.setClientType(ClientType.JOINER);
 
                 entryPoint.serverConnection.sendText(gson.toJson(joinMessage));
 
-                //entryPoint.setScreen(entryPoint.room);
+                entryPoint.setScreen(entryPoint.room);
             }
         });
     }

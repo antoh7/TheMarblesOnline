@@ -4,12 +4,6 @@ public class Message {
 
     public Message() {}
 
-    // конструктор для служебного сообщения
-    public Message(final String messageType, final String notification) {
-        this.messageType = messageType;
-        this.notification = notification;
-    }
-
     // ********** обязательные параметры **********
     private String roomId;
     private String clientType;
@@ -63,7 +57,7 @@ public class Message {
         this.gameState = gameState;
     }
 
-    public boolean isTurnOrder() {
+    public boolean getTurnOrder() {
         return turnOrder;
     }
 
