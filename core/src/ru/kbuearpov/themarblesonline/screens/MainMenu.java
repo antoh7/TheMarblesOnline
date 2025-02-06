@@ -18,12 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ru.kbuearpov.themarblesonline.EntryPoint;
 import ru.kbuearpov.themarblesonline.constants.Constants;
 
-/** Main menu with two buttons, activating one of these screens.
- * @see Screen
- * @see CreateRoom
- * @see JoinRoom
- * **/
-
 public class MainMenu implements Screen {
 	private final EntryPoint entryPoint;
 	private final Stage stage;
@@ -97,7 +91,7 @@ public class MainMenu implements Screen {
 		buttonPressedSound.dispose();
 	}
 
-	//############################# init methods ###########################
+	// ########################### инициализационные методы ############################
 
 	private void initCreateButton(){
 		createButton.setSize(Constants.WIDGET_PREFERRED_WIDTH, Constants.WIDGET_PREFERRED_HEIGHT);

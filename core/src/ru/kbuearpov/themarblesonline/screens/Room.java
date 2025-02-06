@@ -17,18 +17,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
-import com.google.gson.Gson;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
-import ru.kbuearpov.themarblesonline.*;
+import ru.kbuearpov.themarblesonline.EntryPoint;
+import ru.kbuearpov.themarblesonline.Player;
 import ru.kbuearpov.themarblesonline.constants.Constants;
 import ru.kbuearpov.themarblesonline.myImpls.SelectBox;
-import ru.kbuearpov.themarblesonline.myImpls.SerializableImage;
-import ru.kbuearpov.themarblesonline.networking.Receiver;
+import ru.kbuearpov.themarblesonline.networking.ClientType;
+import ru.kbuearpov.themarblesonline.networking.Message;
+import ru.kbuearpov.themarblesonline.networking.MessageType;
 import ru.kbuearpov.themarblesonline.utils.FontGenerator;
 import ru.kbuearpov.themarblesonline.utils.GameUtils;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,41 +36,30 @@ import static com.badlogic.gdx.Gdx.*;
 import static com.badlogic.gdx.utils.Align.center;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-/** Main game class working in multithreaded mode, all events occur here, contains sounds, textures, player instances.
- * @see Screen
- * @see SerializableImage
- * @see Player
- * @see Sound
- * @see Receiver
- * @see Stage
- * @see SelectBox
- * @see EntryPoint
- * @see Map
- * **/
 
 public class Room implements Screen {
 
     private final EntryPoint entryPoint;
     private final Stage stage;
+
     private final Image background;
     private final SelectBox<Integer> betSelection;
     private final SelectBox<String> statementSelection;
-    private final BitmapFont indicatorFont;
-   // private final ThreadFactory threadFactory;
     private final TextButton startButton;
-    private final Sound betMadeSound;
-    private final Label tokenArea;
-    private final Label tokenLabel;
-    private final GlyphLayout marblesAmountLayout, turnLayout;
-    private final Player current, opponent;
-    private final Gson gson;
-    private final Thread gameEventThread;
+    private final Label tokenArea, tokenLabel;
+    private Map<Integer, Image> opponentHandInstances, ourHandInstances;
 
-    private Map<Integer, SerializableImage> opponentHandInstances;
-    private Map<Integer, SerializableImage> ourHandInstances;
-    private Map<Integer, Sound> marblesHittingSounds;
-    private Map<Integer, Sound> givingMarblesAwaySounds;
+    private final BitmapFont indicatorFont;
+    private final GlyphLayout marblesAmountLayout, turnLayout;
+
+    private final Sound betMadeSound;
+    private Map<Integer, Sound> marblesHittingSounds, givingMarblesAwaySounds;
+
+    private final Player current, opponent;
+    private Thread gameEventThread;
+
     private String gameState;
+
     private boolean turnCurrent, endOfAct, currentReady, opponentReady;
 
     public Room(EntryPoint entryPoint){
@@ -79,18 +68,6 @@ public class Room implements Screen {
         stage = new Stage();
 
         gameState = Constants.WAITING_FOR_PLAYER_CONNECT;
-
-        currentReady = false;
-        opponentReady = false;
-        endOfAct = false;
-
-        //threadFactory = new ThreadFactory();
-
-        //threadFactory.createAndAdd(this::initAcceptingThread, "accepting_thread", true);
-        //threadFactory.createAndAdd(this::initNetUpdateListener, "net_update_listener_thread", true);
-        //threadFactory.createAndAdd(this::initGameEventListener, "event_update_manager_thread", true);
-        gameEventThread = new Thread(this::initGameEventListener, "event_update_manager_thread");
-        gameEventThread.setDaemon(true);
 
         indicatorFont = FontGenerator.generateFont(files.internal("fonts/indicatorFont.ttf"), 80, Color.ROYAL, Constants.CHARACTERS);
 
@@ -110,12 +87,10 @@ public class Room implements Screen {
         betMadeSound = audio.newSound(files.internal("sounds/bet_made.mp3"));
         loadSounds();
 
-        current = new Player(new SerializableImage((new Texture(files.internal("textures/ou_h_c.png")))),
-                new SerializableImage(), Constants.WIDTH - Player.getDefaultHandWidth(), 0);
-        opponent = new Player(new SerializableImage((new Texture(files.internal("textures/op_h_c.png")))),
-                new SerializableImage(), 0, Constants.HEIGHT - Player.getDefaultHandHeight());
-
-        gson = new Gson();
+        current = new Player(new Image((new Texture(files.internal("textures/ou_h_c.png")))),
+                new Image(), Constants.WIDTH - Player.getDefaultHandWidth(), 0);
+        opponent = new Player(new Image((new Texture(files.internal("textures/op_h_c.png")))),
+                new Image(), 0, Constants.HEIGHT - Player.getDefaultHandHeight());
 
         initBackground();
         initTokenLabel();
@@ -127,25 +102,33 @@ public class Room implements Screen {
     @Override
     public void show() {
 
-        initTokenArea();
+        gameEventThread = new Thread(this::initGameEventListener, "game_event_thread");
+        gameEventThread.setDaemon(true);
 
-        initWebSocketListener(entryPoint.serverConnection);
+        if (!entryPoint.mightBeRestarted) {
 
-        //threadFactory.startThread("accepting_thread");
+            initTokenArea();
 
-        stage.addActor(background);
+            initWebSocketListener(entryPoint.serverConnection);
 
-        stage.addActor(current.getPlayerHandClosed());
-        stage.addActor(opponent.getPlayerHandClosed());
-        stage.addActor(current.getPlayerHandOpened());
-        stage.addActor(opponent.getPlayerHandOpened());
+            stage.addActor(background);
 
-        stage.addActor(betSelection);
-        stage.addActor(statementSelection);
+            stage.addActor(current.getPlayerHandClosed());
+            stage.addActor(opponent.getPlayerHandClosed());
+            stage.addActor(current.getPlayerHandOpened());
+            stage.addActor(opponent.getPlayerHandOpened());
 
-        if (entryPoint.clientType.equals(ClientType.INITIATOR)) {
-            stage.addActor(tokenLabel);
-            stage.addActor(tokenArea);
+            stage.addActor(betSelection);
+            stage.addActor(statementSelection);
+
+            if (entryPoint.clientType.equals(ClientType.INITIATOR)) {
+                stage.addActor(tokenLabel);
+                stage.addActor(tokenArea);
+            }
+
+        } else {
+            if (entryPoint.clientType.equals(ClientType.INITIATOR))
+                GameUtils.setActorVisible(startButton, true);
         }
 
         input.setInputProcessor(stage);
@@ -160,7 +143,7 @@ public class Room implements Screen {
 
         entryPoint.batch.begin();
 
-        //hand rendering
+        // отрисовка рук
         if (gameState.equals(Constants.GAME_RUNNING)) {
             String text;
 
@@ -174,7 +157,6 @@ public class Room implements Screen {
             indicatorFont.draw(entryPoint.batch, turnLayout, (float) Constants.WIDTH/6 - turnLayout.width/2, turnLayout.height + 10);
             indicatorFont.draw(entryPoint.batch, marblesAmountLayout, (float) Constants.WIDTH/6*5 - marblesAmountLayout.width/2, turnLayout.height + 10);
 
-            //threadFactory.startThread("event_update_manager_thread");
             if (!gameEventThread.isAlive())
                 gameEventThread.start();
 
@@ -189,9 +171,9 @@ public class Room implements Screen {
                 opponent.setHandVisible(opponent.getPlayerHandClosed(), false);
                 current.setHandVisible(current.getPlayerHandOpened(), true);
                 opponent.setHandVisible(opponent.getPlayerHandOpened(), true);
-
             }
         }
+
         entryPoint.batch.end();
 
     }
@@ -213,7 +195,6 @@ public class Room implements Screen {
 
     @Override
     public void hide() {
-        stage.clear();
     }
 
     @Override
@@ -225,26 +206,13 @@ public class Room implements Screen {
     }
 
 
-    // ################################## threads init methods #################################
-
-    //private void initAcceptingThread(){
-    //    try {
-    //        entryPoint.client = entryPoint.server.accept();
-//
-    //    } catch (NullPointerException ignore){
-    //    } catch (IOException e) {
-    //        System.exit(5);
-    //    }
-    //    receiver = new Receiver(entryPoint.client);
-    //    gameState = Constants.WAITING_FOR_START;
-    //    threadFactory.startThread("net_update_listener_thread");
-    //}
+    // ################################## слушатель сети #################################
 
     private void initWebSocketListener(final WebSocket client) {
         client.addListener(new WebSocketAdapter() {
             @Override
-            public void onTextMessage(WebSocket websocket, String text) throws Exception {
-                Message message = gson.fromJson(text, Message.class);
+            public void onTextMessage(WebSocket websocket, String text) {
+                Message message = entryPoint.converter.fromJson(text, Message.class);
                 String messageType = message.getMessageType();
 
                 switch (messageType) {
@@ -272,6 +240,11 @@ public class Room implements Screen {
                                 gameEventThread.notify();
                             }
                         }
+
+                        if (message.getRestartAvailable()) {
+                            entryPoint.mightBeRestarted = true;
+                            gameState = Constants.WAITING_FOR_START;
+                        }
                     }
 
                 }
@@ -279,29 +252,11 @@ public class Room implements Screen {
         });
     }
 
-   //private void initNetUpdateListener(){
-
-   //    DataPacket currPacket;
-   //    Player abstractPlayer;
-
-   //    while (!gameState.equals(Constants.GAME_FINISHED)) {
-
-   //        currPacket = receiver.getData();
-   //        if (currPacket == null) continue;
-   //        abstractPlayer = currPacket.getPlayerData();
-
-
-   //        synchronized (this) {
-   //            gameState = currPacket.getGameState();
-   //            opponentReady = currPacket.getPlayerReady();
-   //            turnCurrent = !currPacket.getTurnOrder();
-   //        }
-   //    }
-   //}
+    // ################################## слушатель игровых событий #################################
 
     private void initGameEventListener() {
 
-        while (!gameState.equals(Constants.GAME_FINISHED)) {
+        while (true) {
 
             synchronized (this) {
                 if (turnCurrent && !currentReady)
@@ -353,7 +308,7 @@ public class Room implements Screen {
                             current.setMarblesAmount(currentMarblesAmount - opponentBet);
 
                             currentMarblesAmountOnHand = currentBet - opponentBet;
-                            opponentMarblesAmountOnHand = opponentBet*2;
+                            opponentMarblesAmountOnHand = opponentBet * 2;
                         }
 
                     } else{
@@ -421,16 +376,17 @@ public class Room implements Screen {
                 // задержка перед обновлением сцены
                 GameUtils.timedWaiting(SECONDS, 3);
 
-                reset();
+                if(checkGameFinished()) {
+                    break;
+                }
 
-                checkGameFinished();
+                reset();
 
             }
         }
     }
 
-    // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ widgets init methods $$$$$$$$$$$$$$$$$$$$$$$$$$
-
+    // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ инициализация виджетов $$$$$$$$$$$$$$$$$$$$$$$$$$
 
     private void initStartButton(){
         startButton.setSize(Constants.WIDGET_PREFERRED_WIDTH + 100, Constants.WIDGET_PREFERRED_HEIGHT + 35);
@@ -484,15 +440,13 @@ public class Room implements Screen {
     }
 
     private void initTokenLabel() {
-        String text = "(КЛИК ЧТОБЫ СКОПИРОВАТЬ)";
-
         tokenLabel.setSize(Constants.WIDGET_PREFERRED_WIDTH + 100, Constants.WIDGET_PREFERRED_HEIGHT - 20);
         tokenLabel.setPosition((float) Constants.WIDTH/2 - tokenLabel.getWidth()/2,
                 (float) Constants.HEIGHT/2 - tokenLabel.getHeight()*2 - 50 - tokenLabel.getHeight());
 
         tokenLabel.setAlignment(center);
 
-        tokenLabel.setText(text);
+        tokenLabel.setText("(КЛИК ЧТОБЫ СКОПИРОВАТЬ)");
 
         tokenLabel.setFontScale(MathUtils.ceil(tokenLabel.getWidth()/ tokenLabel.getMinWidth()),
                 MathUtils.ceil(tokenLabel.getHeight()/ tokenLabel.getMinHeight()));
@@ -515,14 +469,14 @@ public class Room implements Screen {
         betSelection.addListener(new ClickListener() {
             @Override
             public void clicked (InputEvent event, float x, float y) {
-                betSelection.setCanBeExecuted(true);
+                betSelection.setForward(true);
             }
         });
         betSelection.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
 
-                if (!betSelection.getCanBeExecuted()) return;
+                if (!betSelection.getForward()) return;
 
                 int bet = betSelection.getSelected();
 
@@ -550,9 +504,7 @@ public class Room implements Screen {
                     message.setBet(current.getBet());
                     message.setMarblesAmount(current.getMarblesAmount());
 
-                    entryPoint.serverConnection.sendText(gson.toJson(message));
-
-                    //receiver.sendData(new DataPacket(gameState, turnCurrent, currentReady, current));
+                    entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
 
                     betMadeSound.play();
 
@@ -607,9 +559,7 @@ public class Room implements Screen {
                 message.setMarblesAmount(current.getMarblesAmount());
                 message.setStatement(current.getStatement());
 
-                entryPoint.serverConnection.sendText(gson.toJson(message));
-
-                //receiver.sendData(new DataPacket(gameState, turnCurrent, currentReady, current));
+                entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
 
             }
         });
@@ -618,15 +568,15 @@ public class Room implements Screen {
     }
 
 
-    // &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& load methods &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+    // &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& загрузчики &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
     private void loadImages(){
-        // loads hand textures
+        // загрузка текстур рук
         opponentHandInstances = new HashMap<>();
         ourHandInstances = new HashMap<>();
         for(int i = 0; i < 11; i++){
-            opponentHandInstances.put(i, new SerializableImage(new Texture(files.internal("textures/op_h_" + i + "_o.png"))));
-            ourHandInstances.put(i, new SerializableImage(new Texture(files.internal("textures/ou_h_" + i + "_o.png"))));
+            opponentHandInstances.put(i, new Image(new Texture(files.internal("textures/op_h_" + i + "_o.png"))));
+            ourHandInstances.put(i, new Image(new Texture(files.internal("textures/ou_h_" + i + "_o.png"))));
         }
     }
 
@@ -649,23 +599,25 @@ public class Room implements Screen {
     }
 
 
-    // ********************************* in-game methods ********************************
+    // ********************************* методы в процессе игры ********************************
 
-    private void checkGameFinished(){
-        // checks if a game must be finished
-        if (current.getMarblesAmount() == 0){
+    private boolean checkGameFinished(){
+        // проверка игры на окончание
+        if (current.getMarblesAmount() == 0) {
             finishGame();
             entryPoint.setScreen(entryPoint.defeatScreen);
+            return true;
         }
-        if (opponent.getMarblesAmount() == 0){
+        if (opponent.getMarblesAmount() == 0) {
             finishGame();
             entryPoint.setScreen(entryPoint.victoryScreen);
+            return true;
         }
+        return false;
     }
 
     private void choosePlayerTurn(){
-        // at start, once selects whose turn to make bet
-        gameState = Constants.RANDOMIZING_TURN;
+        // выбор очередности хода в начале игры
         boolean[] turnVariants = new boolean[]{true, false};
 
         turnCurrent = turnVariants[MathUtils.random(0, turnVariants.length - 1)];
@@ -682,12 +634,8 @@ public class Room implements Screen {
         message.setTurnOrder(turnCurrent);
         message.setPlayerReady(currentReady);
 
-        //message.setBet(current.getBet());
-        //message.setMarblesAmount(current.getMarblesAmount());
+        entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
 
-        entryPoint.serverConnection.sendText(gson.toJson(message));
-
-        //receiver.sendData(new DataPacket(gameState, turnCurrent, currentReady, current));
     }
 
     private void reset(){
@@ -715,15 +663,12 @@ public class Room implements Screen {
             message.setTurnOrder(turnCurrent);
             message.setPlayerReady(currentReady);
 
-            //message.setBet(current.getBet());
             message.setMarblesAmount(current.getMarblesAmount());
 
-            entryPoint.serverConnection.sendText(gson.toJson(message));
+            entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
 
-            //receiver.sendData(new DataPacket(gameState, turnCurrent, currentReady, current));
         } else {
             // если клиент - JOINER, то он будет ждать получения сообщения от INITIATOR
-            // TODO блокировать поток до получения сообщени
             try {
                 synchronized (gameEventThread) {
                     gameEventThread.wait();
@@ -731,7 +676,6 @@ public class Room implements Screen {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            //GameUtils.timedWaiting(SECONDS, 1);
         }
     }
 
@@ -744,14 +688,17 @@ public class Room implements Screen {
         opponentReady = false;
         endOfAct = false;
 
-        current.setPlayerHandOpened(new SerializableImage());
+        GameUtils.setActorVisible(current.getPlayerHandOpened(), false);
         current.setMarblesAmount(5);
         current.setBet(0);
         current.setStatement(null);
-        opponent.setPlayerHandOpened(new SerializableImage());
+
+        GameUtils.setActorVisible(opponent.getPlayerHandOpened(), false);
         opponent.setMarblesAmount(5);
         opponent.setBet(0);
         opponent.setStatement(null);
+
+        betSelection.setItems(GameUtils.computeBetsRange(1, 5));
 
     }
 

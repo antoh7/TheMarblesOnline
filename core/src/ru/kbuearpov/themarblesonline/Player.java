@@ -1,32 +1,21 @@
 package ru.kbuearpov.themarblesonline;
 
-import ru.kbuearpov.themarblesonline.myImpls.SerializableImage;
-
-import java.io.Serializable;
-
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import ru.kbuearpov.themarblesonline.constants.Constants;
 
-/** Represents basic game entity, contains marbles, hand textures, statement and bet.
- * @see SerializableImage
- */
+// сущность игрока
+public class Player {
 
-public class Player implements Serializable {
+    private final Image playerHandClosed, playerHandOpened;
 
-    private final SerializableImage playerHandClosed;
-    private final SerializableImage playerHandOpened;
-
-    private int marblesAmount;
-    private int bet;
+    private int marblesAmount, bet;
     private String statement;
 
-    // hand params
+    // параметры руки
     private final float defaultX, defaultY;
     private static final float defaultWidth = (float) Constants.WIDTH/3, defaultHeight = Constants.HEIGHT - (float) Constants.HEIGHT/3;
 
-
-    public static final long serialVersionUID = 1111111111L;
-
-    public Player(SerializableImage playerHandClosed, SerializableImage playerHandOpened, float handX, float handY){
+    public Player(final Image playerHandClosed, final Image playerHandOpened, final float handX, final float handY){
 
         this.marblesAmount = 5;
 
@@ -35,57 +24,61 @@ public class Player implements Serializable {
         this.defaultX = handX;
         this.defaultY = handY;
 
-        initHand(this.playerHandClosed, defaultX, defaultY, defaultWidth, defaultHeight);
-        initHand(this.playerHandOpened, defaultX, defaultY, defaultWidth, defaultHeight);
+        initHand(this.playerHandClosed, defaultX, defaultY);
+        initHand(this.playerHandOpened, defaultX, defaultY);
 
         setHandVisible(this.playerHandClosed, false);
         setHandVisible(this.playerHandOpened, false);
     }
 
-    public SerializableImage getPlayerHandClosed(){
+    public Image getPlayerHandClosed(){
         return playerHandClosed;
     }
 
-    public SerializableImage getPlayerHandOpened(){
+    public Image getPlayerHandOpened(){
         return playerHandOpened;
     }
 
-    public void setPlayerHandOpened(SerializableImage playerHandOpened){
+
+    public void setPlayerHandOpened(final Image playerHandOpened){
         this.playerHandOpened.setDrawable(playerHandOpened.getDrawable());
-        initHand(this.playerHandOpened, defaultX, defaultY, defaultWidth, defaultHeight);
+        initHand(this.playerHandOpened, defaultX, defaultY);
     }
 
-    public void setHandVisible(SerializableImage hand, boolean state){
+    public void setHandVisible(final Image hand, final boolean state) {
         hand.setVisible(state);
     }
 
-    public int getMarblesAmount() {
-        return marblesAmount;
+
+    public void setBet(final int bet) {
+        this.bet = bet;
     }
 
-    public void setMarblesAmount(int marblesAmount) {
+    public void setStatement(final String statement) {
+        this.statement = statement;
+    }
+
+    public void setMarblesAmount(final int marblesAmount) {
         this.marblesAmount = marblesAmount;
+    }
+
+
+    public int getMarblesAmount() {
+        return marblesAmount;
     }
 
     public int getBet() {
         return bet;
     }
 
-    public void setBet(int bet) {
-        this.bet = bet;
-    }
-
     public String getStatement() {
         return statement;
     }
 
-    public void setStatement(String statement) {
-        this.statement = statement;
-    }
 
-    private void initHand(SerializableImage hand, float x, float y, float width, float height){
+    private void initHand(final Image hand, final float x, final float y) {
         hand.setPosition(x, y);
-        hand.setSize(width, height);
+        hand.setSize(defaultWidth, defaultHeight);
     }
 
     public static float getDefaultHandWidth(){

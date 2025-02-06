@@ -1,4 +1,4 @@
-package ru.kbuearpov.themarblesonline;
+package ru.kbuearpov.themarblesonline.networking;
 
 public class Message {
 
@@ -14,8 +14,8 @@ public class Message {
     private boolean turnOrder; // true - очередь отправителя, false - очередь получателя
     private boolean playerReady;
 
-    // окончание игры
-    private boolean finished;
+    // флаг, разрешающий начать игру заново
+    private boolean restartAvailable;
 
     // игрок
     private int marblesAmount;
@@ -73,12 +73,12 @@ public class Message {
         this.playerReady = playerReady;
     }
 
-    public boolean isFinished() {
-        return finished;
+    public boolean getRestartAvailable() {
+        return restartAvailable;
     }
 
-    public void setFinished(boolean finished) {
-        this.finished = finished;
+    public void setRestartAvailable(boolean restartAvailable) {
+        this.restartAvailable = restartAvailable;
     }
 
     public int getMarblesAmount() {

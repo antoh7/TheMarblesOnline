@@ -4,43 +4,33 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Null;
 
-import ru.kbuearpov.themarblesonline.screens.Room;
-
-/**
- * Overwrites {@link com.badlogic.gdx.scenes.scene2d.ui.SelectBox}, adds {@link SelectBox#canBeExecuted} flag to avoid
- * unwanted code execution in {@link Room}.
- * @see Room
- * @see com.badlogic.gdx.scenes.scene2d.ui.SelectBox
- * @param <T>
- */
-
 public class SelectBox<T> extends com.badlogic.gdx.scenes.scene2d.ui.SelectBox<T> {
 
-    private boolean canBeExecuted;
+    private boolean forward;
 
     public SelectBox (Skin skin){
         super(skin);
-        canBeExecuted = true;
+        forward = true;
     }
 
     @Override
     public void setItems (Array<T> newItems) {
-        canBeExecuted = false;
+        forward = false;
         super.setItems(newItems);
     }
 
     @Override
     public @Null T getSelected () {
-        canBeExecuted = false;
+        forward = false;
         return super.getSelected();
     }
 
-    public boolean getCanBeExecuted(){
-        return canBeExecuted;
+    public boolean getForward(){
+        return forward;
     }
 
-    public void setCanBeExecuted(boolean canBeExecuted) {
-        this.canBeExecuted = canBeExecuted;
+    public void setForward(boolean forward) {
+        this.forward = forward;
     }
 
 }

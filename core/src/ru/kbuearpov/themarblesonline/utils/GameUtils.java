@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * @see Array
  * **/
 
-public class  GameUtils {
+public class GameUtils {
 
     public static void setActorVisible(Actor actor, boolean visible){
         // makes actor visible/invisible

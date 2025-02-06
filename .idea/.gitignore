@@ -6,3 +6,9 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+#####################
+
+#/core/build/
+#/desktop/build/
+#/TheMarblesOnline/.lwjgl/

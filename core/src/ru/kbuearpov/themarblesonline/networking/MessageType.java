@@ -1,4 +1,4 @@
-package ru.kbuearpov.themarblesonline;
+package ru.kbuearpov.themarblesonline.networking;
 
 public class MessageType {
 

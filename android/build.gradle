@@ -21,8 +21,8 @@ android {
         applicationId "ru.kbuearpov.themarblesonline"
         minSdkVersion 23 // >= android 6.0
         targetSdkVersion 33
-        versionCode 2
-        versionName "1.1"
+        versionCode 1
+        versionName "1.2"
     }
     buildTypes {
         release {

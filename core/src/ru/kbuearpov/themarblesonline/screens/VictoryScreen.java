@@ -1,9 +1,5 @@
 package ru.kbuearpov.themarblesonline.screens;
 
-import static com.badlogic.gdx.Gdx.audio;
-import static com.badlogic.gdx.Gdx.files;
-import static com.badlogic.gdx.Gdx.input;
-
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
@@ -12,27 +8,35 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ru.kbuearpov.themarblesonline.EntryPoint;
 import ru.kbuearpov.themarblesonline.constants.Constants;
+import ru.kbuearpov.themarblesonline.networking.ClientType;
+import ru.kbuearpov.themarblesonline.networking.Message;
+import ru.kbuearpov.themarblesonline.networking.MessageType;
 import ru.kbuearpov.themarblesonline.utils.FontGenerator;
+import ru.kbuearpov.themarblesonline.utils.GameUtils;
 
-/** Activates if opponent lost all his marbles (you won).
- * @see Screen
- * **/
+import static com.badlogic.gdx.Gdx.*;
 
 public class VictoryScreen implements Screen {
 
     private final EntryPoint entryPoint;
     private final Stage stage;
+
     private final Image background;
     private final TextButton exit;
+    private final TextButton restart;
     private final BitmapFont victoryFont;
+
     private final Sound victorySound;
+
     private final GlyphLayout victoryLayout;
 
     public VictoryScreen(EntryPoint entryPoint) {
@@ -41,7 +45,10 @@ public class VictoryScreen implements Screen {
         stage = new Stage();
 
         background = new Image(new Texture(files.internal("textures/victory.jpg")));
-        exit = new TextButton("ВЫЙТИ", new Skin(files.internal("buttons/exitbuttonassets/exitbuttonskin.json")));
+
+        exit = new TextButton("ВЫЙТИ", new Skin(files.internal("buttons/endgamebuttonassets/endgamebuttonskin.json")));
+        restart = new TextButton("ЗАНОВО", new Skin(files.internal("buttons/endgamebuttonassets/endgamebuttonskin.json")));
+
         victoryFont = FontGenerator.generateFont(files.internal("fonts/victoryFont.ttf"), 160, Color.CYAN, Constants.CHARACTERS);
 
         victoryLayout = new GlyphLayout(victoryFont, "ПОБЕДА!");
@@ -49,6 +56,7 @@ public class VictoryScreen implements Screen {
         victorySound = audio.newSound(files.internal("sounds/victory_sound.wav"));
 
         initExitButton();
+        initRestartButton();
         initBackground();
 
     }
@@ -57,6 +65,7 @@ public class VictoryScreen implements Screen {
     public void show() {
 
         stage.addActor(background);
+        stage.addActor(restart);
         stage.addActor(exit);
 
         input.setInputProcessor(stage);
@@ -68,6 +77,7 @@ public class VictoryScreen implements Screen {
     public void render(float delta) {
 
         stage.act(delta);
+
         stage.draw();
 
         entryPoint.batch.begin();
@@ -94,7 +104,6 @@ public class VictoryScreen implements Screen {
 
     @Override
     public void hide() {
-        stage.clear();
     }
 
     @Override
@@ -105,7 +114,7 @@ public class VictoryScreen implements Screen {
     }
 
 
-    //########################### init methods ############################
+    // ########################### инициализационные методы ############################
 
     private void initExitButton(){
         exit.setSize(Constants.WIDGET_PREFERRED_WIDTH + 20, Constants.WIDGET_PREFERRED_HEIGHT + 10);
@@ -114,10 +123,37 @@ public class VictoryScreen implements Screen {
 
         exit.getLabel().setFontScale(MathUtils.floor(exit.getWidth()/exit.getMinWidth()),
                 MathUtils.floor(exit.getHeight()/exit.getMinHeight()));
-        exit.addListener(new ChangeListener() {
+        exit.addListener(new ClickListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                System.exit(0);
+            public void clicked(InputEvent event, float x, float y) {
+                app.exit();
+            }
+        });
+    }
+
+    private void initRestartButton(){
+        restart.setSize(Constants.WIDGET_PREFERRED_WIDTH + 20, Constants.WIDGET_PREFERRED_HEIGHT + 10);
+        restart.setPosition((float) Constants.WIDTH/2 - exit.getWidth() / 2,
+                (float) Constants.HEIGHT/2 - restart.getHeight() * 1.5f - 20);
+
+        restart.getLabel().setFontScale(MathUtils.floor(restart.getWidth()/restart.getMinWidth()),
+                MathUtils.floor(restart.getHeight()/restart.getMinHeight()));
+        restart.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                entryPoint.mightBeRestarted = true;
+
+                Message message = new Message();
+
+                message.setRoomId(entryPoint.currentRoomId);
+                message.setClientType(entryPoint.clientType);
+                message.setMessageType(MessageType.GAME_IN_PROCESS);
+
+                message.setRestartAvailable(true);
+
+                entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
+
+                entryPoint.setScreen(entryPoint.room);
             }
         });
     }

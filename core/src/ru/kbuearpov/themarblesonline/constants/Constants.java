@@ -21,15 +21,10 @@ public class Constants {
     public static final int WIDGET_PREFERRED_WIDTH = ceil((float) WIDTH*widthProportion);
     public static final int WIDGET_PREFERRED_HEIGHT = ceil((float) HEIGHT*heightProportion);
 
-    //device states
-    public static final String SERVER = "SERVER";
-    public static final String CLIENT = "CLIENT";
-
     //game states
     public static final String WAITING_FOR_START = "WAITING_FOR_START";
     public static final String WAITING_FOR_PLAYER_CONNECT = "WAITING_FOR_PLAYER_CONNECT";
     public static final String GAME_RUNNING = "GAME_RUNNING";
-    public static final String RANDOMIZING_TURN = "RANDOMIZING_TURN";
     public static final String GAME_FINISHED = "GAME_FINISHED";
 
     //statements

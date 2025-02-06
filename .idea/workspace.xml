@@ -9,7 +9,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="709a0672-fc61-457f-b955-d22f0c76cae5" name="Changes" comment="version 1.0;&#10;TheMarbles repository fork;&#10;started API connection logic development;&#10;message classes added;&#10;main package renamed;">
+    <list default="true" id="709a0672-fc61-457f-b955-d22f0c76cae5" name="Changes" comment="version 1.2;&#10;TheMarbles repository fork;&#10;started API connection logic development;&#10;message classes added;&#10;main package renamed;">
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/checksums.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" afterDir="false" />
@@ -17,45 +17,75 @@
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/buttons/exitbuttonassets/exitbuttonskin.atlas" beforeDir="false" afterPath="$PROJECT_DIR$/assets/buttons/endgamebuttonassets/endgamebuttonskin.atlas" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/buttons/exitbuttonassets/exitbuttonskin.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/buttons/endgamebuttonassets/endgamebuttonskin.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/buttons/exitbuttonassets/exitbuttonskin.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/buttons/endgamebuttonassets/endgamebuttonskin.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/buttons/exitbuttonassets/font.fnt" beforeDir="false" afterPath="$PROJECT_DIR$/assets/buttons/endgamebuttonassets/font.fnt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/ClientType.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/EntryPoint.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/EntryPoint.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/Message.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/Message.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/Message.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/MessageType.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/Player.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/TestClass.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/TestClass.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/constants/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/constants/Constants.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/myImpls/SelectBox.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/myImpls/SelectBox.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/myImpls/SerializableImage.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/networking/DataPacket.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/networking/Receiver.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/CreateRoom$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/CreateRoom$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/CreateRoom$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/CreateRoom$2.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/CreateRoom.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/CreateRoom.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/DefeatScreen$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/DefeatScreen$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/DefeatScreen.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/DefeatScreen.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/JoinRoom$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/JoinRoom$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/JoinRoom$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/JoinRoom$2.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/JoinRoom$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/JoinRoom$3.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/JoinRoom.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/JoinRoom.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/MainMenu$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/MainMenu$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/MainMenu$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/MainMenu$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/MainMenu.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/MainMenu.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room$2.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room$3.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room$4.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room$5.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room$6.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/Room.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/utils/GameUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/utils/GameUtils.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/utils/PreGameStartedUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/utils/PreGameStartedUtils.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/utils/ThreadFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/utils/ThreadFactory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/build/libs/core-1.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/libs/core-1.0.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/VictoryScreen$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/VictoryScreen$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/VictoryScreen.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/screens/VictoryScreen.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build/classes/java/main/ru/kbuearpov/themarblesonline/utils/ThreadFactory.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/core/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/core/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/ClientType.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/networking/ClientType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/EntryPoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/EntryPoint.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/Message.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/networking/Message.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/MessageType.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/networking/MessageType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/Player.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/TestClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/TestClass.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/constants/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/constants/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/myImpls/SelectBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/myImpls/SelectBox.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/myImpls/SerializableImage.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/networking/DataPacket.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/networking/Receiver.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/screens/CreateRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/screens/CreateRoom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/screens/DefeatScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/screens/DefeatScreen.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/screens/JoinRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/screens/JoinRoom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/screens/MainMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/screens/MainMenu.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/screens/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/screens/Room.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/screens/VictoryScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/screens/VictoryScreen.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/utils/GameUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/utils/GameUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/utils/PreGameStartedUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/utils/PreGameStartedUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/utils/ThreadFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/utils/ThreadFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/desktop/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop/build/classes/java/main/ru/kbuearpov/themarblesonline/DesktopLauncher.class" beforeDir="false" afterPath="$PROJECT_DIR$/desktop/build/classes/java/main/ru/kbuearpov/themarblesonline/DesktopLauncher.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/ru/kbuearpov/themarblesonline/utils/ThreadFactory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop/build/resources/main/buttons/exitbuttonassets/exitbuttonskin.atlas" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop/build/resources/main/buttons/exitbuttonassets/exitbuttonskin.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop/build/resources/main/buttons/exitbuttonassets/exitbuttonskin.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/desktop/build/resources/main/buttons/exitbuttonassets/font.fnt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/desktop/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/desktop/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop/src/ru/kbuearpov/themarblesonline/DesktopLauncher.java" beforeDir="false" afterPath="$PROJECT_DIR$/desktop/src/ru/kbuearpov/themarblesonline/DesktopLauncher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/ios/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ios/robovm.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ios/robovm.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -72,6 +102,9 @@
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
         <projects_view>
           <tree_state>
             <expand>
@@ -112,6 +145,7 @@
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
     &quot;com.intellij.openapi.externalSystem.service.settings.ExternalSystemGroupConfigurable&quot;: &quot;ALL&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Android/java/TheMarblesOnline/core/src/ru/kbuearpov/themarblesonline&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Dependencies&quot;,
@@ -125,9 +159,9 @@
       <recent name="C:\Android\java\TheMarblesOnline\core\src\ru\kbuearpov\themarblesonline" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.DesktopLauncher">
+  <component name="RunManager" selected="Android App.android">
     <configuration name="android" type="AndroidRunConfigurationType" factoryName="Android App">
-      <module name="TheMarblesOnline.android.main" />
+      <module name="TheMarblesOnline.android" />
       <option name="DEPLOY" value="true" />
       <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
       <option name="DEPLOY_AS_INSTANT" value="false" />
@@ -178,7 +212,7 @@
       <module name="TheMarblesOnline.core.main" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="ru.kbuearpov.themarblesonline.*" />
+          <option name="PATTERN" value="ru.kbuearpov.themarblesonline.networking.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -186,15 +220,38 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="TheMarblesOnline [dist]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="dist" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Android App.android" />
       <item itemvalue="Application.TestClass" />
       <item itemvalue="Application.DesktopLauncher" />
+      <item itemvalue="Gradle.TheMarblesOnline [dist]" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.TestClass" />
+        <item itemvalue="Gradle.TheMarblesOnline [dist]" />
         <item itemvalue="Application.DesktopLauncher" />
+        <item itemvalue="Application.TestClass" />
       </list>
     </recent_temporary>
   </component>
@@ -209,6 +266,11 @@
       <workItem from="1738431266117" duration="5762000" />
       <workItem from="1738485946242" duration="1392000" />
       <workItem from="1738519655219" duration="1981000" />
+      <workItem from="1738610235840" duration="3605000" />
+      <workItem from="1738693158247" duration="5151000" />
+      <workItem from="1738699051393" duration="976000" />
+      <workItem from="1738769416172" duration="2676000" />
+      <workItem from="1738867344000" duration="479000" />
     </task>
     <task id="LOCAL-00001" summary="version 1.0;&#10;TheMarbles repository fork;&#10;started API connection logic development;&#10;message classes added;&#10;package renamed;">
       <created>1738350706548</created>
@@ -251,6 +313,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="version 1.0;&#10;TheMarbles repository fork;&#10;started API connection logic development;&#10;message classes added;&#10;package renamed;" />
     <MESSAGE value="version 1.0;&#10;TheMarbles repository fork;&#10;started API connection logic development;&#10;message classes added;&#10;main package renamed;" />
-    <option name="LAST_COMMIT_MESSAGE" value="version 1.0;&#10;TheMarbles repository fork;&#10;started API connection logic development;&#10;message classes added;&#10;main package renamed;" />
+    <MESSAGE value="version 1.1;&#10;API interconnection structure finished (full game functionality is available);&#10;game event listener thread on JOINER side being blocked every time after reset (to avoid glitches);" />
+    <option name="LAST_COMMIT_MESSAGE" value="version 1.1;&#10;API interconnection structure finished (full game functionality is available);&#10;game event listener thread on JOINER side being blocked every time after reset (to avoid glitches);" />
   </component>
 </project>

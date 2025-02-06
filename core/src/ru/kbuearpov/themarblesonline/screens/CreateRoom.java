@@ -24,24 +24,21 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 
 import java.io.IOException;
 
-import ru.kbuearpov.themarblesonline.ClientType;
+import ru.kbuearpov.themarblesonline.networking.ClientType;
 import ru.kbuearpov.themarblesonline.EntryPoint;
-import ru.kbuearpov.themarblesonline.Message;
-import ru.kbuearpov.themarblesonline.MessageType;
+import ru.kbuearpov.themarblesonline.networking.Message;
+import ru.kbuearpov.themarblesonline.networking.MessageType;
 import ru.kbuearpov.themarblesonline.utils.PreGameStartedUtils;
 
 public class CreateRoom implements Screen {
 
     private final EntryPoint entryPoint;
+    private final Stage stage;
 
     private final Image background;
     private final TextButton create, cancel;
-    private final Stage stage;
 
     private final Sound buttonPressedSound;
-
-    private final Gson gson;
-
 
     public CreateRoom(EntryPoint entryPoint) {
         this.entryPoint = entryPoint;
@@ -53,8 +50,6 @@ public class CreateRoom implements Screen {
 
         create = new TextButton("СОЗДАТЬ", new Skin(files.internal("buttons/createbuttonassets/createbuttonskin.json")));
         cancel = new TextButton("ОТМЕНА",new Skin(files.internal("buttons/cancelbuttonassets/cancelbuttonskin.json")));
-
-        gson = new Gson();
 
         initBackground();
         initCancelButton();
@@ -107,7 +102,7 @@ public class CreateRoom implements Screen {
     }
 
 
-    //############################# init methods ##########################
+    // ########################### инициализационные методы ############################
 
     private void initCancelButton(){
         cancel.setSize(WIDGET_PREFERRED_WIDTH, WIDGET_PREFERRED_HEIGHT);
@@ -136,7 +131,6 @@ public class CreateRoom implements Screen {
         create.addListener(new ClickListener() {
             @Override
             public void clicked (InputEvent event, float x, float y) {
-                // TODO создание комнаты
 
                 try {
                     entryPoint.serverConnection = new WebSocketFactory()
@@ -164,7 +158,7 @@ public class CreateRoom implements Screen {
                 createMessage.setMessageType(MessageType.ROOM_INIT);
                 createMessage.setClientType(ClientType.INITIATOR);
 
-                entryPoint.serverConnection.sendText(gson.toJson(createMessage));
+                entryPoint.serverConnection.sendText(entryPoint.converter.toJson(createMessage));
 
                 entryPoint.setScreen(entryPoint.room);
             }
