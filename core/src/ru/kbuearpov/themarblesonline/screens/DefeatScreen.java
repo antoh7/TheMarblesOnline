@@ -14,15 +14,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ru.kbuearpov.themarblesonline.EntryPoint;
-import ru.kbuearpov.themarblesonline.constants.Constants;
-import ru.kbuearpov.themarblesonline.networking.ClientType;
 import ru.kbuearpov.themarblesonline.networking.Message;
-import ru.kbuearpov.themarblesonline.networking.MessageType;
+import ru.kbuearpov.themarblesonline.networking.constants.MessageType;
 import ru.kbuearpov.themarblesonline.utils.FontGenerator;
-import ru.kbuearpov.themarblesonline.utils.GameUtils;
 
 import static com.badlogic.gdx.Gdx.*;
-import static ru.kbuearpov.themarblesonline.constants.Constants.*;
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.*;
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.CHARACTERS;
 
 public class DefeatScreen implements Screen {
 
@@ -45,8 +43,8 @@ public class DefeatScreen implements Screen {
 
         background = new Image(new Texture(files.internal("textures/defeat.jpg")));
 
-        exit = new TextButton("ВЫЙТИ", new Skin(files.internal("buttons/endgamebuttonassets/endgamebuttonskin.json")));
-        restart = new TextButton("ЗАНОВО", new Skin(files.internal("buttons/endgamebuttonassets/endgamebuttonskin.json")));
+        exit = new TextButton("ВЫЙТИ", new Skin(files.internal("buttons/utilbuttonassets/utilbuttonskin.json")));
+        restart = new TextButton("ЗАНОВО", new Skin(files.internal("buttons/utilbuttonassets/utilbuttonskin.json")));
 
         defeatFont = FontGenerator.generateFont(files.internal("fonts/defeatFont.otf"), 160, Color.FIREBRICK, CHARACTERS);
 
@@ -115,7 +113,7 @@ public class DefeatScreen implements Screen {
     // ########################### инициализационные методы ############################
 
     private void initExitButton(){
-        exit.setSize(Constants.WIDGET_PREFERRED_WIDTH + 20, Constants.WIDGET_PREFERRED_HEIGHT + 10);
+        exit.setSize(WIDGET_PREFERRED_WIDTH + 20, WIDGET_PREFERRED_HEIGHT + 10);
         exit.setPosition((float) WIDTH/2 - exit.getWidth() / 2,
                 (float) HEIGHT/2 - exit.getHeight() / 2);
 
@@ -131,9 +129,9 @@ public class DefeatScreen implements Screen {
     }
 
     private void initRestartButton(){
-        restart.setSize(Constants.WIDGET_PREFERRED_WIDTH + 20, Constants.WIDGET_PREFERRED_HEIGHT + 10);
-        restart.setPosition((float) Constants.WIDTH/2 - exit.getWidth() / 2,
-                (float) Constants.HEIGHT/2 - restart.getHeight() * 1.5f - 20);
+        restart.setSize(WIDGET_PREFERRED_WIDTH + 20, WIDGET_PREFERRED_HEIGHT + 10);
+        restart.setPosition((float) WIDTH/2 - exit.getWidth() / 2,
+                (float) HEIGHT/2 - restart.getHeight() * 1.5f - 20);
 
         restart.getLabel().setFontScale(MathUtils.floor(restart.getWidth()/restart.getMinWidth()),
                 MathUtils.floor(restart.getHeight()/restart.getMinHeight()));

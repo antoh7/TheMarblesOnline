@@ -11,9 +11,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import ru.kbuearpov.themarblesonline.EntryPoint;
-import ru.kbuearpov.themarblesonline.networking.ClientType;
+import ru.kbuearpov.themarblesonline.networking.constants.ClientType;
 import ru.kbuearpov.themarblesonline.networking.Message;
-import ru.kbuearpov.themarblesonline.networking.MessageType;
+import ru.kbuearpov.themarblesonline.networking.constants.MessageType;
+import ru.kbuearpov.themarblesonline.utils.constants.PrefsConstants;
 
 import java.io.IOException;
 
@@ -21,7 +22,7 @@ import static com.badlogic.gdx.Gdx.*;
 import static com.badlogic.gdx.Input.OnscreenKeyboardType.Password;
 import static com.badlogic.gdx.Input.Peripheral.OnscreenKeyboard;
 import static com.badlogic.gdx.utils.Align.center;
-import static ru.kbuearpov.themarblesonline.constants.Constants.*;
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.*;
 
 public class JoinRoom implements Screen {
 
@@ -29,9 +30,8 @@ public class JoinRoom implements Screen {
     private final Stage stage;
 
     private final TextField roomIdInput;
-    private final TextButton join, cancel;
+    private final TextButton join, cancel, paste;
     private final Image background;
-    private final Label textLabel;
 
     private final Sound buttonPressedSound;
 
@@ -45,15 +45,15 @@ public class JoinRoom implements Screen {
         buttonPressedSound = audio.newSound(files.internal("sounds/button_pressed.mp3"));
 
         join = new TextButton("ЗАЙТИ", new Skin(files.internal("buttons/connectbuttonassets/connectbuttonskin.json")));
-        cancel = new TextButton("ОТМЕНА",new Skin(files.internal("buttons/cancelbuttonassets/cancelbuttonskin.json")));
-        roomIdInput = new TextField("АЙДИ КОМНАТЫ:",new Skin(files.internal("labels/enterlabel/enterlabelskin.json")));
-        textLabel = new Label("(КЛИК х3 ПО СТРОКЕ ЧТО БЫ ВСТАВИТЬ)", new Skin(files.internal("labels/tokenlabel/tokenlabelskin.json")));
+        cancel = new TextButton("ОТМЕНА", new Skin(files.internal("buttons/cancelbuttonassets/cancelbuttonskin.json")));
+        paste = new TextButton("ВСТАВИТЬ", new Skin(files.internal("buttons/utilbuttonassets/utilbuttonskin.json")));
+        roomIdInput = new TextField("АЙДИ КОМНАТЫ:", new Skin(files.internal("widgets/inputfield/inputfieldskin.json")));
 
         initBackground();
         initCancelButton();
         initJoinButton();
         initRoomIdInput();
-        initTextLabel();
+        initPasteButton();
 
     }
 
@@ -64,7 +64,7 @@ public class JoinRoom implements Screen {
         stage.addActor(join);
         stage.addActor(cancel);
         stage.addActor(roomIdInput);
-        stage.addActor(textLabel);
+        stage.addActor(paste);
 
         input.setInputProcessor(stage);
 
@@ -137,20 +137,21 @@ public class JoinRoom implements Screen {
 
                 try {
                     entryPoint.serverConnection = new WebSocketFactory()
-                            .createSocket("ws://localhost/connection/new");
+                            .createSocket("ws://%s/connection/new".formatted(
+                                    app.getPreferences(PrefsConstants.PREFS_NAME).getString(PrefsConstants.PREFS_KEY)));
                 } catch (IOException ioException) {
                     return;
                 }
                 entryPoint.serverConnection.addHeader("User-Agent", "The-Marbles-Online-Client");
-
-                buttonPressedSound.play();
-                entryPoint.menuMusic.stop();
 
                 try {
                     entryPoint.serverConnection.connect();
                 } catch (WebSocketException webSocketException) {
                     return;
                 }
+
+                buttonPressedSound.play();
+                entryPoint.menuMusic.stop();
 
                 entryPoint.currentRoomId = roomIdInput.getText();
                 entryPoint.clientType = ClientType.JOINER;
@@ -173,15 +174,6 @@ public class JoinRoom implements Screen {
         roomIdInput.setPosition((float) WIDTH/2 - roomIdInput.getWidth()/2, (float) HEIGHT/2 + 100);
         roomIdInput.setAlignment(center);
 
-        roomIdInput.addListener(new ClickListener() {
-            @Override
-            public void clicked (InputEvent event, float x, float y) {
-                if (getTapCount() == 3)
-                    if (app.getClipboard().hasContents())
-                        roomIdInput.setText(app.getClipboard().getContents());
-            }
-        });
-
         roomIdInput.setTextFieldFilter((textField, c) -> String.valueOf(c).matches("^[A-Za-z0-9]$"));
 
         roomIdInput.setMaxLength(7);
@@ -197,15 +189,21 @@ public class JoinRoom implements Screen {
         background.setSize(WIDTH, HEIGHT);
     }
 
-    private void initTextLabel() {
-        textLabel.setSize(WIDGET_PREFERRED_WIDTH + 100, WIDGET_PREFERRED_HEIGHT);
-        textLabel.setPosition((float) WIDTH/2 - textLabel.getWidth()/2,
-                textLabel.getHeight() + 5);
+    private void initPasteButton() {
+        paste.setSize(WIDGET_PREFERRED_WIDTH, WIDGET_PREFERRED_HEIGHT - 20);
+        paste.setPosition(roomIdInput.getX() + roomIdInput.getWidth()/2 - paste.getWidth()/2,
+                roomIdInput.getY() + paste.getHeight() + 10);
 
-        textLabel.setAlignment(center);
+        paste.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (app.getClipboard().hasContents())
+                    roomIdInput.setText(app.getClipboard().getContents());
+            }
+        });
 
-        textLabel.setFontScale(MathUtils.ceil(textLabel.getWidth()/ textLabel.getMinWidth()),
-                MathUtils.ceil(textLabel.getHeight()/ textLabel.getMinHeight()));
+        paste.getLabel().setFontScale(MathUtils.floor(paste.getWidth()/paste.getMinWidth()),
+                MathUtils.floor(paste.getHeight()/paste.getMinHeight()));
 
     }
 

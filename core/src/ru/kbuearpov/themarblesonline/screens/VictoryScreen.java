@@ -7,23 +7,20 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ru.kbuearpov.themarblesonline.EntryPoint;
-import ru.kbuearpov.themarblesonline.constants.Constants;
-import ru.kbuearpov.themarblesonline.networking.ClientType;
 import ru.kbuearpov.themarblesonline.networking.Message;
-import ru.kbuearpov.themarblesonline.networking.MessageType;
+import ru.kbuearpov.themarblesonline.networking.constants.MessageType;
 import ru.kbuearpov.themarblesonline.utils.FontGenerator;
-import ru.kbuearpov.themarblesonline.utils.GameUtils;
 
 import static com.badlogic.gdx.Gdx.*;
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.*;
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.CHARACTERS;
 
 public class VictoryScreen implements Screen {
 
@@ -46,10 +43,10 @@ public class VictoryScreen implements Screen {
 
         background = new Image(new Texture(files.internal("textures/victory.jpg")));
 
-        exit = new TextButton("ВЫЙТИ", new Skin(files.internal("buttons/endgamebuttonassets/endgamebuttonskin.json")));
-        restart = new TextButton("ЗАНОВО", new Skin(files.internal("buttons/endgamebuttonassets/endgamebuttonskin.json")));
+        exit = new TextButton("ВЫЙТИ", new Skin(files.internal("buttons/utilbuttonassets/utilbuttonskin.json")));
+        restart = new TextButton("ЗАНОВО", new Skin(files.internal("buttons/utilbuttonassets/utilbuttonskin.json")));
 
-        victoryFont = FontGenerator.generateFont(files.internal("fonts/victoryFont.ttf"), 160, Color.CYAN, Constants.CHARACTERS);
+        victoryFont = FontGenerator.generateFont(files.internal("fonts/victoryFont.ttf"), 160, Color.CYAN, CHARACTERS);
 
         victoryLayout = new GlyphLayout(victoryFont, "ПОБЕДА!");
 
@@ -82,8 +79,8 @@ public class VictoryScreen implements Screen {
 
         entryPoint.batch.begin();
 
-        victoryFont.draw(entryPoint.batch, victoryLayout, (float) Constants.WIDTH/2 - victoryLayout.width/2,
-                (float) Constants.HEIGHT/2 + victoryLayout.height*2);
+        victoryFont.draw(entryPoint.batch, victoryLayout, (float) WIDTH/2 - victoryLayout.width/2,
+                (float) HEIGHT/2 + victoryLayout.height*2);
 
         entryPoint.batch.end();
     }
@@ -117,9 +114,9 @@ public class VictoryScreen implements Screen {
     // ########################### инициализационные методы ############################
 
     private void initExitButton(){
-        exit.setSize(Constants.WIDGET_PREFERRED_WIDTH + 20, Constants.WIDGET_PREFERRED_HEIGHT + 10);
-        exit.setPosition((float) Constants.WIDTH/2 - exit.getWidth() / 2,
-                (float) Constants.HEIGHT/2 - exit.getHeight() / 2);
+        exit.setSize(WIDGET_PREFERRED_WIDTH + 20, WIDGET_PREFERRED_HEIGHT + 10);
+        exit.setPosition((float) WIDTH/2 - exit.getWidth() / 2,
+                (float) HEIGHT/2 - exit.getHeight() / 2);
 
         exit.getLabel().setFontScale(MathUtils.floor(exit.getWidth()/exit.getMinWidth()),
                 MathUtils.floor(exit.getHeight()/exit.getMinHeight()));
@@ -132,9 +129,9 @@ public class VictoryScreen implements Screen {
     }
 
     private void initRestartButton(){
-        restart.setSize(Constants.WIDGET_PREFERRED_WIDTH + 20, Constants.WIDGET_PREFERRED_HEIGHT + 10);
-        restart.setPosition((float) Constants.WIDTH/2 - exit.getWidth() / 2,
-                (float) Constants.HEIGHT/2 - restart.getHeight() * 1.5f - 20);
+        restart.setSize(WIDGET_PREFERRED_WIDTH + 20, WIDGET_PREFERRED_HEIGHT + 10);
+        restart.setPosition((float) WIDTH/2 - exit.getWidth() / 2,
+                (float) HEIGHT/2 - restart.getHeight() * 1.5f - 20);
 
         restart.getLabel().setFontScale(MathUtils.floor(restart.getWidth()/restart.getMinWidth()),
                 MathUtils.floor(restart.getHeight()/restart.getMinHeight()));
@@ -159,7 +156,7 @@ public class VictoryScreen implements Screen {
     }
 
     private void initBackground(){
-        background.setSize(Constants.WIDTH, Constants.HEIGHT);
+        background.setSize(WIDTH, HEIGHT);
         background.setPosition(0, 0);
     }
 }

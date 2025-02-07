@@ -7,7 +7,7 @@ import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
 
 // FIXME: 02.08.2024 Launcher is unable to run application
-// The Marbles does not support IOS
+// The Marbles Online does not support IOS
 public class IOSLauncher extends IOSApplication.Delegate {
     @Override
     protected IOSApplication createApplication() {

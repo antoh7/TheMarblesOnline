@@ -12,8 +12,7 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("The Marbles Online");
 		config.setResizable(false);
-		//config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
-		config.setWindowedMode(900, 720);
+		config.setWindowedMode(1200, 710);
 
 		new Lwjgl3Application(new EntryPoint(), config);
 	}

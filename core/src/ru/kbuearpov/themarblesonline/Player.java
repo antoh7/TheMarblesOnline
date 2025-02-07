@@ -1,7 +1,9 @@
 package ru.kbuearpov.themarblesonline;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import ru.kbuearpov.themarblesonline.constants.Constants;
+
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.HEIGHT;
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.WIDTH;
 
 // сущность игрока
 public class Player {
@@ -13,7 +15,7 @@ public class Player {
 
     // параметры руки
     private final float defaultX, defaultY;
-    private static final float defaultWidth = (float) Constants.WIDTH/3, defaultHeight = Constants.HEIGHT - (float) Constants.HEIGHT/3;
+    private static final float defaultWidth = (float) WIDTH/3, defaultHeight = HEIGHT - (float) HEIGHT/3;
 
     public Player(final Image playerHandClosed, final Image playerHandOpened, final float handX, final float handY){
 

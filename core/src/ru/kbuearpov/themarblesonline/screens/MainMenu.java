@@ -1,10 +1,7 @@
 package ru.kbuearpov.themarblesonline.screens;
 
 
-import static com.badlogic.gdx.Gdx.audio;
-import static com.badlogic.gdx.Gdx.files;
-import static com.badlogic.gdx.Gdx.input;
-
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,9 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ru.kbuearpov.themarblesonline.EntryPoint;
-import ru.kbuearpov.themarblesonline.constants.Constants;
+import ru.kbuearpov.themarblesonline.utils.constants.PrefsConstants;
+
+import static com.badlogic.gdx.Gdx.*;
+import static com.badlogic.gdx.Input.OnscreenKeyboardType.Password;
+import static com.badlogic.gdx.Input.Peripheral.OnscreenKeyboard;
+import static com.badlogic.gdx.utils.Align.center;
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.*;
 
 public class MainMenu implements Screen {
 	private final EntryPoint entryPoint;
@@ -24,6 +28,8 @@ public class MainMenu implements Screen {
 
 	private final Image background;
 	private final TextButton joinButton, createButton;
+	private final TextField serverAddress;
+	private final TextButton confirm;
 
 	private final Sound buttonPressedSound;
 
@@ -37,9 +43,13 @@ public class MainMenu implements Screen {
 		buttonPressedSound = audio.newSound(files.internal("sounds/button_pressed.mp3"));
 
 		joinButton = new TextButton("ЗАЙТИ", new Skin(files.internal("buttons/connectbuttonassets/connectbuttonskin.json")));
-		createButton = new TextButton("СОЗДАТЬ",new Skin(files.internal("buttons/createbuttonassets/createbuttonskin.json")));
+		confirm = new TextButton("ОК", new Skin(files.internal("buttons/utilbuttonassets/utilbuttonskin.json")));
+		createButton = new TextButton("СОЗДАТЬ", new Skin(files.internal("buttons/createbuttonassets/createbuttonskin.json")));
+		serverAddress = new TextField("", new Skin(files.internal("widgets/inputfield/inputfieldskin.json")));
 
 		initBackground();
+		initAddressInput();
+		initConfirmButton();
 		initCreateButton();
 		initJoinButton();
 
@@ -50,10 +60,19 @@ public class MainMenu implements Screen {
 	public void show() {
 
 		stage.addActor(background);
+		stage.addActor(serverAddress);
+		stage.addActor(confirm);
 		stage.addActor(joinButton);
 		stage.addActor(createButton);
 
 		input.setInputProcessor(stage);
+
+		String addr = app.getPreferences(PrefsConstants.PREFS_NAME).getString(PrefsConstants.PREFS_KEY);
+
+		if (addr.isEmpty())
+			serverAddress.setText("0.0.0.0:12345");
+		else
+			serverAddress.setText(addr);
 
 		entryPoint.menuMusic.play();
 
@@ -64,6 +83,7 @@ public class MainMenu implements Screen {
 
 		stage.act(delta);
 		stage.draw();
+
 	}
 
 	@Override
@@ -86,7 +106,7 @@ public class MainMenu implements Screen {
 	}
 
 	@Override
-	public void dispose () {
+	public void dispose() {
 		stage.dispose();
 		buttonPressedSound.dispose();
 	}
@@ -94,9 +114,9 @@ public class MainMenu implements Screen {
 	// ########################### инициализационные методы ############################
 
 	private void initCreateButton(){
-		createButton.setSize(Constants.WIDGET_PREFERRED_WIDTH, Constants.WIDGET_PREFERRED_HEIGHT);
-		createButton.setPosition((float) Constants.WIDTH/2 + createButton.getWidth()/2,
-				(float) Constants.HEIGHT/2 - createButton.getHeight()/2);
+		createButton.setSize(WIDGET_PREFERRED_WIDTH, WIDGET_PREFERRED_HEIGHT);
+		createButton.setPosition((float) WIDTH/2 + createButton.getWidth()/2,
+				(float) HEIGHT/2 - createButton.getHeight()/2);
 
 		createButton.getLabel().setFontScale(MathUtils.floor(createButton.getWidth()/createButton.getMinWidth()),
 				MathUtils.floor(createButton.getHeight()/createButton.getMinHeight()));
@@ -111,9 +131,9 @@ public class MainMenu implements Screen {
 	}
 
 	private void initJoinButton(){
-		joinButton.setSize(Constants.WIDGET_PREFERRED_WIDTH, Constants.WIDGET_PREFERRED_HEIGHT);
-		joinButton.setPosition((float) Constants.WIDTH/2 - joinButton.getWidth() - joinButton.getWidth()/2,
-				(float) Constants.HEIGHT/2 - joinButton.getHeight()/2);
+		joinButton.setSize(WIDGET_PREFERRED_WIDTH, WIDGET_PREFERRED_HEIGHT);
+		joinButton.setPosition((float) WIDTH/2 - joinButton.getWidth() - joinButton.getWidth()/2,
+				(float) HEIGHT/2 - joinButton.getHeight()/2);
 
 		joinButton.getLabel().setFontScale(MathUtils.floor(joinButton.getWidth()/joinButton.getMinWidth()),
 				MathUtils.floor(joinButton.getHeight()/joinButton.getMinHeight()));
@@ -127,9 +147,41 @@ public class MainMenu implements Screen {
 		});
 	}
 
+	private void initAddressInput() {
+		serverAddress.setSize(WIDGET_PREFERRED_WIDTH + 200, WIDGET_PREFERRED_HEIGHT - 20);
+		serverAddress.setPosition((float) WIDTH/2 - serverAddress.getWidth()/2,
+				(float) HEIGHT - serverAddress.getHeight() * 2);
+		serverAddress.setAlignment(center);
+
+		serverAddress.setTextFieldFilter((textField, c) -> String.valueOf(c).matches("^[0-9.:]{1,18}$"));
+
+		serverAddress.setMaxLength(21);
+
+		if(input.isPeripheralAvailable(OnscreenKeyboard))
+			serverAddress.setOnscreenKeyboard(visible ->
+					input.setOnscreenKeyboardVisible(true, Password));
+	}
+
+	private void initConfirmButton() {
+		confirm.setSize(WIDGET_PREFERRED_WIDTH, WIDGET_PREFERRED_HEIGHT - 20);
+		confirm.setPosition(serverAddress.getX() + serverAddress.getWidth()/2 - confirm.getWidth()/2,
+				serverAddress.getY() - confirm.getHeight() - 10);
+
+		confirm.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				Preferences prefs = app.getPreferences(PrefsConstants.PREFS_NAME);
+				prefs.putString(PrefsConstants.PREFS_KEY, serverAddress.getText());
+				prefs.flush();
+
+				confirm.setText("СОХРАНЕНО");
+			}
+		});
+	}
+
 	private void initBackground(){
 		background.setPosition(0, 0);
-		background.setSize(Constants.WIDTH, Constants.HEIGHT);
+		background.setSize(WIDTH, HEIGHT);
 	}
 
 }

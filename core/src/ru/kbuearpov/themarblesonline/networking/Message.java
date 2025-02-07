@@ -22,8 +22,6 @@ public class Message {
     private int bet;
     private String statement;
 
-    // ********** служебное сообщение **********
-    private String notification;
 
     public String getRoomId() {
         return roomId;
@@ -103,13 +101,5 @@ public class Message {
 
     public void setStatement(String statement) {
         this.statement = statement;
-    }
-
-    public String getNotification() {
-        return notification;
-    }
-
-    public void setNotification(String notification) {
-        this.notification = notification;
     }
 }

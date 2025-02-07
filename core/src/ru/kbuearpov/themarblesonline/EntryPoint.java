@@ -63,4 +63,13 @@ public class EntryPoint extends Game {
         setScreen(mainMenu);
     }
 
+    @Override
+    public void dispose() {
+        menuMusic.dispose();
+        batch.dispose();
+
+        // закрытие соединения с сервером
+        if (serverConnection != null)
+            serverConnection.disconnect();
+    }
 }

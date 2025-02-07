@@ -21,11 +21,10 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import ru.kbuearpov.themarblesonline.EntryPoint;
 import ru.kbuearpov.themarblesonline.Player;
-import ru.kbuearpov.themarblesonline.constants.Constants;
 import ru.kbuearpov.themarblesonline.myImpls.SelectBox;
-import ru.kbuearpov.themarblesonline.networking.ClientType;
+import ru.kbuearpov.themarblesonline.networking.constants.ClientType;
 import ru.kbuearpov.themarblesonline.networking.Message;
-import ru.kbuearpov.themarblesonline.networking.MessageType;
+import ru.kbuearpov.themarblesonline.networking.constants.MessageType;
 import ru.kbuearpov.themarblesonline.utils.FontGenerator;
 import ru.kbuearpov.themarblesonline.utils.GameUtils;
 
@@ -35,6 +34,8 @@ import java.util.Map;
 import static com.badlogic.gdx.Gdx.*;
 import static com.badlogic.gdx.utils.Align.center;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.*;
+import static ru.kbuearpov.themarblesonline.utils.constants.GameConstants.*;
 
 
 public class Room implements Screen {
@@ -67,19 +68,19 @@ public class Room implements Screen {
 
         stage = new Stage();
 
-        gameState = Constants.WAITING_FOR_PLAYER_CONNECT;
+        gameState = WAITING_FOR_PLAYER_CONNECT;
 
-        indicatorFont = FontGenerator.generateFont(files.internal("fonts/indicatorFont.ttf"), 80, Color.ROYAL, Constants.CHARACTERS);
+        indicatorFont = FontGenerator.generateFont(files.internal("fonts/indicatorFont.ttf"), 80, Color.ROYAL, CHARACTERS);
 
         marblesAmountLayout = new GlyphLayout();
         turnLayout = new GlyphLayout();
 
         startButton = new TextButton("НАЧАТЬ", new Skin(files.internal("buttons/startbuttonassets/startbuttonskin.json")));
-        betSelection = new SelectBox<>(new Skin(files.internal("labels/selectlist/selectlistskin.json")));
-        statementSelection = new SelectBox<>(new Skin(files.internal("labels/selectlist/selectlistskin.json")));
+        betSelection = new SelectBox<>(new Skin(files.internal("widgets/selectlist/selectlistskin.json")));
+        statementSelection = new SelectBox<>(new Skin(files.internal("widgets/selectlist/selectlistskin.json")));
 
-        tokenArea = new Label("", new Skin(files.internal("labels/tokenlabel/tokenlabelskin.json")));
-        tokenLabel = new Label("", new Skin(files.internal("labels/tokenlabel/tokenlabelskin.json")));
+        tokenArea = new Label("", new Skin(files.internal("widgets/tokenlabel/tokenlabelskin.json")));
+        tokenLabel = new Label("", new Skin(files.internal("widgets/tokenlabel/tokenlabelskin.json")));
 
         background = new Image(new Texture(files.internal("textures/game_background.jpg")));
         loadImages();
@@ -88,9 +89,9 @@ public class Room implements Screen {
         loadSounds();
 
         current = new Player(new Image((new Texture(files.internal("textures/ou_h_c.png")))),
-                new Image(), Constants.WIDTH - Player.getDefaultHandWidth(), 0);
+                new Image(), WIDTH - Player.getDefaultHandWidth(), 0);
         opponent = new Player(new Image((new Texture(files.internal("textures/op_h_c.png")))),
-                new Image(), 0, Constants.HEIGHT - Player.getDefaultHandHeight());
+                new Image(), 0, HEIGHT - Player.getDefaultHandHeight());
 
         initBackground();
         initTokenLabel();
@@ -144,7 +145,7 @@ public class Room implements Screen {
         entryPoint.batch.begin();
 
         // отрисовка рук
-        if (gameState.equals(Constants.GAME_RUNNING)) {
+        if (gameState.equals(GAME_RUNNING)) {
             String text;
 
             synchronized (this) {
@@ -154,8 +155,8 @@ public class Room implements Screen {
             marblesAmountLayout.setText(indicatorFont, "Шары: " + current.getMarblesAmount());
             turnLayout.setText(indicatorFont, text);
 
-            indicatorFont.draw(entryPoint.batch, turnLayout, (float) Constants.WIDTH/6 - turnLayout.width/2, turnLayout.height + 10);
-            indicatorFont.draw(entryPoint.batch, marblesAmountLayout, (float) Constants.WIDTH/6*5 - marblesAmountLayout.width/2, turnLayout.height + 10);
+            indicatorFont.draw(entryPoint.batch, turnLayout, (float) WIDTH/6 - turnLayout.width/2, turnLayout.height + 10);
+            indicatorFont.draw(entryPoint.batch, marblesAmountLayout, (float) WIDTH/6*5 - marblesAmountLayout.width/2, turnLayout.height + 10);
 
             if (!gameEventThread.isAlive())
                 gameEventThread.start();
@@ -202,13 +203,14 @@ public class Room implements Screen {
         stage.dispose();
         betMadeSound.dispose();
         indicatorFont.dispose();
+
         disposeSounds();
     }
 
 
     // ################################## слушатель сети #################################
 
-    private void initWebSocketListener(final WebSocket client) {
+    private void initWebSocketListener(WebSocket client) {
         client.addListener(new WebSocketAdapter() {
             @Override
             public void onTextMessage(WebSocket websocket, String text) {
@@ -220,7 +222,7 @@ public class Room implements Screen {
                     // подсоединение к комнате
                     case MessageType.ROOM_JOIN -> {
                         stage.addActor(startButton);
-                        gameState = Constants.WAITING_FOR_START;
+                        gameState = WAITING_FOR_START;
                     }
 
                     // игра в процессе
@@ -243,12 +245,13 @@ public class Room implements Screen {
 
                         if (message.getRestartAvailable()) {
                             entryPoint.mightBeRestarted = true;
-                            gameState = Constants.WAITING_FOR_START;
+                            gameState = WAITING_FOR_START;
                         }
                     }
 
                 }
             }
+
         });
     }
 
@@ -296,8 +299,8 @@ public class Room implements Screen {
                 // оппонент угадывает
                 if (turnCurrent){
 
-                    if ((opponentStatement.equals(Constants.EVEN) && GameUtils.isEven(currentBet)) ||
-                            (opponentStatement.equals(Constants.ODD) && GameUtils.isOdd(currentBet))){
+                    if ((opponentStatement.equals(EVEN) && GameUtils.isEven(currentBet)) ||
+                            (opponentStatement.equals(ODD) && GameUtils.isOdd(currentBet))){
                         if (currentBet <= opponentBet) {
                             opponent.setMarblesAmount(opponentMarblesAmount + currentBet);
                             current.setMarblesAmount(currentMarblesAmount - currentBet);
@@ -333,8 +336,8 @@ public class Room implements Screen {
                 // текущий игрок угадывает
                 if (!turnCurrent){
 
-                    if ((currentStatement.equals(Constants.EVEN) && GameUtils.isEven(opponentBet)) ||
-                            (currentStatement.equals(Constants.ODD) && GameUtils.isOdd(opponentBet))){
+                    if ((currentStatement.equals(EVEN) && GameUtils.isEven(opponentBet)) ||
+                            (currentStatement.equals(ODD) && GameUtils.isOdd(opponentBet))){
                         if (currentBet <= opponentBet) {
                             current.setMarblesAmount(currentMarblesAmount + currentBet);
                             opponent.setMarblesAmount(opponentMarblesAmount - currentBet);
@@ -389,9 +392,9 @@ public class Room implements Screen {
     // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ инициализация виджетов $$$$$$$$$$$$$$$$$$$$$$$$$$
 
     private void initStartButton(){
-        startButton.setSize(Constants.WIDGET_PREFERRED_WIDTH + 100, Constants.WIDGET_PREFERRED_HEIGHT + 35);
-        startButton.setPosition((float) Constants.WIDTH/2 - startButton.getWidth() / 2,
-                (float) Constants.HEIGHT/2 - startButton.getHeight() / 2);
+        startButton.setSize(WIDGET_PREFERRED_WIDTH + 100, WIDGET_PREFERRED_HEIGHT + 35);
+        startButton.setPosition((float) WIDTH/2 - startButton.getWidth() / 2,
+                (float) HEIGHT/2 - startButton.getHeight() / 2);
 
         startButton.getLabel().setFontScale(MathUtils.floor(startButton.getWidth()/startButton.getMinWidth()),
                 MathUtils.floor(startButton.getHeight()/startButton.getMinHeight()));
@@ -399,7 +402,7 @@ public class Room implements Screen {
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked (InputEvent event, float x, float y) {
-                if (gameState.equals(Constants.WAITING_FOR_START)) {
+                if (gameState.equals(WAITING_FOR_START)) {
                     choosePlayerTurn();
 
                     GameUtils.setActorVisible(startButton, false);
@@ -413,15 +416,15 @@ public class Room implements Screen {
 
     private void initBackground(){
         background.setPosition(0, 0);
-        background.setSize(Constants.WIDTH, Constants.HEIGHT);
+        background.setSize(WIDTH, HEIGHT);
     }
 
     private void initTokenArea() {
         String text = entryPoint.currentRoomId;
 
-        tokenArea.setSize((float) Constants.WIDTH/2, Constants.WIDGET_PREFERRED_HEIGHT - 20);
-        tokenArea.setPosition((float) Constants.WIDTH/2 - tokenArea.getWidth()/2,
-                (float) Constants.HEIGHT/2 - tokenArea.getHeight()*2 - 30);
+        tokenArea.setSize((float) WIDTH/2, WIDGET_PREFERRED_HEIGHT - 20);
+        tokenArea.setPosition((float) WIDTH/2 - tokenArea.getWidth()/2,
+                (float) HEIGHT/2 - tokenArea.getHeight()*2 - 30);
 
         tokenArea.setAlignment(center);
 
@@ -440,9 +443,9 @@ public class Room implements Screen {
     }
 
     private void initTokenLabel() {
-        tokenLabel.setSize(Constants.WIDGET_PREFERRED_WIDTH + 100, Constants.WIDGET_PREFERRED_HEIGHT - 20);
-        tokenLabel.setPosition((float) Constants.WIDTH/2 - tokenLabel.getWidth()/2,
-                (float) Constants.HEIGHT/2 - tokenLabel.getHeight()*2 - 50 - tokenLabel.getHeight());
+        tokenLabel.setSize(WIDGET_PREFERRED_WIDTH + 100, WIDGET_PREFERRED_HEIGHT - 20);
+        tokenLabel.setPosition((float) WIDTH/2 - tokenLabel.getWidth()/2,
+                (float) HEIGHT/2 - tokenLabel.getHeight()*2 - 50 - tokenLabel.getHeight());
 
         tokenLabel.setAlignment(center);
 
@@ -456,13 +459,13 @@ public class Room implements Screen {
 
     private void initBetSelectionWindow(){
         betSelection.setAlignment(center);
-        betSelection.setSize(Constants.WIDGET_PREFERRED_WIDTH + 100, Constants.WIDGET_PREFERRED_HEIGHT + 35);
-        betSelection.setPosition((float) Constants.WIDTH / 2 - betSelection.getWidth() / 2,
-                (float) Constants.HEIGHT / 2);
+        betSelection.setSize(WIDGET_PREFERRED_WIDTH + 100, WIDGET_PREFERRED_HEIGHT + 35);
+        betSelection.setPosition((float) WIDTH / 2 - betSelection.getWidth() / 2,
+                (float) HEIGHT / 2);
 
         betSelection.getScrollPane().getList().setAlignment(center);
 
-        betSelection.getStyle().listStyle.selection.setBottomHeight(MathUtils.floor((float) (Constants.HEIGHT/4) / 9));
+        betSelection.getStyle().listStyle.selection.setBottomHeight(MathUtils.floor((float) (HEIGHT/4) / 9));
 
         betSelection.setItems(GameUtils.computeBetsRange(1, 5));
 
@@ -523,16 +526,16 @@ public class Room implements Screen {
 
     private void initStatementSelectionWindow() {
         statementSelection.setAlignment(center);
-        statementSelection.setSize(Constants.WIDGET_PREFERRED_WIDTH + 100, Constants.WIDGET_PREFERRED_HEIGHT + 35);
-        statementSelection.setPosition((float) Constants.WIDTH / 2 - statementSelection.getWidth() / 2,
-                (float) Constants.HEIGHT / 2);
+        statementSelection.setSize(WIDGET_PREFERRED_WIDTH + 100, WIDGET_PREFERRED_HEIGHT + 35);
+        statementSelection.setPosition((float) WIDTH / 2 - statementSelection.getWidth() / 2,
+                (float) HEIGHT / 2);
 
         statementSelection.getScrollPane().getList().setAlignment(center);
         statementSelection.getStyle().listStyle.selection.setBottomHeight(0);
 
-        statementSelection.getStyle().listStyle.selection.setBottomHeight(MathUtils.floor((float) (Constants.HEIGHT/4) / 2));
+        statementSelection.getStyle().listStyle.selection.setBottomHeight(MathUtils.floor((float) (HEIGHT/4) / 2));
 
-        statementSelection.setItems(Array.with(Constants.ODD, Constants.EVEN));
+        statementSelection.setItems(Array.with(ODD, EVEN));
         statementSelection.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -574,6 +577,7 @@ public class Room implements Screen {
         // загрузка текстур рук
         opponentHandInstances = new HashMap<>();
         ourHandInstances = new HashMap<>();
+
         for(int i = 0; i < 11; i++){
             opponentHandInstances.put(i, new Image(new Texture(files.internal("textures/op_h_" + i + "_o.png"))));
             ourHandInstances.put(i, new Image(new Texture(files.internal("textures/ou_h_" + i + "_o.png"))));
@@ -584,11 +588,11 @@ public class Room implements Screen {
         marblesHittingSounds = new HashMap<>();
         givingMarblesAwaySounds = new HashMap<>();
 
-        for(int i = 0; i < 3; i++){
+        for(int i = 0; i <= 5; i++){
             marblesHittingSounds.put(i, audio.newSound(files.internal("sounds/marbles_hitting_" + i + ".mp3")));
             givingMarblesAwaySounds.put(i, audio.newSound(files.internal("sounds/giving_marbles_away_" + i + ".mp3")));
-
         }
+
     }
 
     private void disposeSounds(){
@@ -622,7 +626,7 @@ public class Room implements Screen {
 
         turnCurrent = turnVariants[MathUtils.random(0, turnVariants.length - 1)];
 
-        gameState = Constants.GAME_RUNNING;
+        gameState = GAME_RUNNING;
 
         Message message = new Message();
 
@@ -681,7 +685,7 @@ public class Room implements Screen {
 
     private void finishGame(){
 
-        gameState = Constants.GAME_FINISHED;
+        gameState = GAME_FINISHED;
 
         turnCurrent = false;
         currentReady = false;

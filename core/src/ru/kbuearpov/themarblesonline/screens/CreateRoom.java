@@ -1,12 +1,10 @@
 package ru.kbuearpov.themarblesonline.screens;
 
-import static com.badlogic.gdx.Gdx.audio;
-import static com.badlogic.gdx.Gdx.files;
-import static com.badlogic.gdx.Gdx.input;
-import static ru.kbuearpov.themarblesonline.constants.Constants.HEIGHT;
-import static ru.kbuearpov.themarblesonline.constants.Constants.WIDGET_PREFERRED_HEIGHT;
-import static ru.kbuearpov.themarblesonline.constants.Constants.WIDGET_PREFERRED_WIDTH;
-import static ru.kbuearpov.themarblesonline.constants.Constants.WIDTH;
+import static com.badlogic.gdx.Gdx.*;
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.HEIGHT;
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.WIDGET_PREFERRED_HEIGHT;
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.WIDGET_PREFERRED_WIDTH;
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.WIDTH;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
@@ -18,17 +16,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.google.gson.Gson;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 
 import java.io.IOException;
 
-import ru.kbuearpov.themarblesonline.networking.ClientType;
+import ru.kbuearpov.themarblesonline.networking.constants.ClientType;
 import ru.kbuearpov.themarblesonline.EntryPoint;
 import ru.kbuearpov.themarblesonline.networking.Message;
-import ru.kbuearpov.themarblesonline.networking.MessageType;
+import ru.kbuearpov.themarblesonline.networking.constants.MessageType;
 import ru.kbuearpov.themarblesonline.utils.PreGameStartedUtils;
+import ru.kbuearpov.themarblesonline.utils.constants.PrefsConstants;
 
 public class CreateRoom implements Screen {
 
@@ -134,20 +132,21 @@ public class CreateRoom implements Screen {
 
                 try {
                     entryPoint.serverConnection = new WebSocketFactory()
-                            .createSocket("ws://localhost/connection/new");
-                } catch (IOException ioException) {
+                            .createSocket("ws://%s/connection/new".formatted(
+                                    app.getPreferences(PrefsConstants.PREFS_NAME).getString(PrefsConstants.PREFS_KEY)));
+                } catch (IOException | IllegalArgumentException connectionException) {
                     return;
                 }
                 entryPoint.serverConnection.addHeader("User-Agent", "The-Marbles-Online-Client");
-
-                buttonPressedSound.play();
-                entryPoint.menuMusic.stop();
 
                 try {
                     entryPoint.serverConnection.connect();
                 } catch (WebSocketException webSocketException) {
                     return;
                 }
+
+                buttonPressedSound.play();
+                entryPoint.menuMusic.stop();
 
                 entryPoint.clientType = ClientType.INITIATOR;
                 entryPoint.currentRoomId = PreGameStartedUtils.generateRoomId();

@@ -11,15 +11,13 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.2'
         classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.19'
-        
-
     }
 }
 
 allprojects {
     apply plugin: "eclipse"
 
-    version = '1.2'
+    version = '1.3 PRE-FINAL'
     ext {
         appName = "The Marbles Online"
         gdxVersion = '1.11.0'
@@ -90,6 +88,13 @@ project(":ios") {
         api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-ios"
         
     }
+
+    //robovm {
+    //    iosSignIdentity = "[Signing identity name]"
+    //    iosProvisioningProfile = "[provisioning profile name]"
+    //    iosSkipSigning = true
+    //    archs = "thumbv7:arm64"
+    //}
 }
 
 project(":core") {
@@ -100,6 +105,8 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         implementation "com.neovisionaries:nv-websocket-client:$wsVersion"
-        implementation "com.google.code.gson:gson:$gsonVersion"
+        implementation("com.google.code.gson:gson:$gsonVersion") {
+            exclude group: "com.google.errorprone", module: "error_prone_annotations"
+        }
     }
 }
