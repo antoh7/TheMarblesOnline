@@ -47,7 +47,7 @@ public class JoinRoom implements Screen {
         join = new TextButton("ЗАЙТИ", new Skin(files.internal("buttons/connectbuttonassets/connectbuttonskin.json")));
         cancel = new TextButton("ОТМЕНА", new Skin(files.internal("buttons/cancelbuttonassets/cancelbuttonskin.json")));
         paste = new TextButton("ВСТАВИТЬ", new Skin(files.internal("buttons/utilbuttonassets/utilbuttonskin.json")));
-        roomIdInput = new TextField("АЙДИ КОМНАТЫ:", new Skin(files.internal("widgets/inputfield/inputfieldskin.json")));
+        roomIdInput = new TextField("ID КОМНАТЫ:", new Skin(files.internal("widgets/inputfield/inputfieldskin.json")));
 
         initBackground();
         initCancelButton();
@@ -138,7 +138,7 @@ public class JoinRoom implements Screen {
                 try {
                     entryPoint.serverConnection = new WebSocketFactory()
                             .createSocket("ws://%s/connection/new".formatted(
-                                    app.getPreferences(PrefsConstants.PREFS_NAME).getString(PrefsConstants.PREFS_KEY)));
+                                    app.getPreferences(PrefsConstants.PREFS_NAME).getString(PrefsConstants.PREFS_KEY)), 7000);
                 } catch (IOException ioException) {
                     return;
                 }

@@ -133,7 +133,7 @@ public class CreateRoom implements Screen {
                 try {
                     entryPoint.serverConnection = new WebSocketFactory()
                             .createSocket("ws://%s/connection/new".formatted(
-                                    app.getPreferences(PrefsConstants.PREFS_NAME).getString(PrefsConstants.PREFS_KEY)));
+                                    app.getPreferences(PrefsConstants.PREFS_NAME).getString(PrefsConstants.PREFS_KEY)), 7000);
                 } catch (IOException | IllegalArgumentException connectionException) {
                     return;
                 }
