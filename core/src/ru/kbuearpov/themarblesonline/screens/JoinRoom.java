@@ -137,9 +137,10 @@ public class JoinRoom implements Screen {
 
                 try {
                     entryPoint.serverConnection = new WebSocketFactory()
-                            .createSocket("ws://%s/connection/new".formatted(
-                                    app.getPreferences(PrefsConstants.PREFS_NAME).getString(PrefsConstants.PREFS_KEY)), 7000);
-                } catch (IOException ioException) {
+                            .createSocket("ws://{}/connection/new".replace(
+                                    "{}", app.getPreferences(PrefsConstants.PREFS_NAME)
+                                            .getString(PrefsConstants.PREFS_KEY)), 7000);
+                } catch (IOException | IllegalArgumentException exception) {
                     return;
                 }
                 entryPoint.serverConnection.addHeader("User-Agent", "The-Marbles-Online-Client");
