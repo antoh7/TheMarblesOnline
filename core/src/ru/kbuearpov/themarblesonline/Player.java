@@ -1,11 +1,15 @@
 package ru.kbuearpov.themarblesonline;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import lombok.Getter;
+import lombok.Setter;
 
 import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.HEIGHT;
 import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.WIDTH;
 
 // сущность игрока
+@Setter
+@Getter
 public class Player {
 
     private final Image playerHandClosed, playerHandOpened;
@@ -33,15 +37,6 @@ public class Player {
         setHandVisible(this.playerHandOpened, false);
     }
 
-    public Image getPlayerHandClosed(){
-        return playerHandClosed;
-    }
-
-    public Image getPlayerHandOpened(){
-        return playerHandOpened;
-    }
-
-
     public void setPlayerHandOpened(final Image playerHandOpened){
         this.playerHandOpened.setDrawable(playerHandOpened.getDrawable());
         initHand(this.playerHandOpened, defaultX, defaultY);
@@ -50,33 +45,6 @@ public class Player {
     public void setHandVisible(final Image hand, final boolean state) {
         hand.setVisible(state);
     }
-
-
-    public void setBet(final int bet) {
-        this.bet = bet;
-    }
-
-    public void setStatement(final String statement) {
-        this.statement = statement;
-    }
-
-    public void setMarblesAmount(final int marblesAmount) {
-        this.marblesAmount = marblesAmount;
-    }
-
-
-    public int getMarblesAmount() {
-        return marblesAmount;
-    }
-
-    public int getBet() {
-        return bet;
-    }
-
-    public String getStatement() {
-        return statement;
-    }
-
 
     private void initHand(final Image hand, final float x, final float y) {
         hand.setPosition(x, y);

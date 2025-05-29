@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ru.kbuearpov.themarblesonline.EntryPoint;
-import ru.kbuearpov.themarblesonline.utils.constants.PrefsConstants;
+import ru.kbuearpov.themarblesonline.utils.constants.NetConstants;
 
 import static com.badlogic.gdx.Gdx.*;
 import static com.badlogic.gdx.Input.OnscreenKeyboardType.Password;
@@ -67,7 +67,7 @@ public class MainMenu implements Screen {
 
 		input.setInputProcessor(stage);
 
-		String addr = app.getPreferences(PrefsConstants.PREFS_NAME).getString(PrefsConstants.PREFS_KEY);
+		String addr = app.getPreferences(NetConstants.PREFS_NAME).getString(NetConstants.PREFS_KEY);
 
 		if (addr.isEmpty())
 			serverAddress.setText("0.0.0.0:12345");
@@ -170,8 +170,8 @@ public class MainMenu implements Screen {
 		confirm.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				Preferences prefs = app.getPreferences(PrefsConstants.PREFS_NAME);
-				prefs.putString(PrefsConstants.PREFS_KEY, serverAddress.getText());
+				Preferences prefs = app.getPreferences(NetConstants.PREFS_NAME);
+				prefs.putString(NetConstants.PREFS_KEY, serverAddress.getText());
 				prefs.flush();
 
 				confirm.setText("СОХРАНЕНО");

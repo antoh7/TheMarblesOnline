@@ -38,7 +38,7 @@ public class EntryPoint extends Game {
     // информация о комнате и игроке
     public String currentRoomId;
     public String clientType;
-    public boolean mightBeRestarted;
+    public boolean canBeRestarted;
 
     // конвертер сообщений
     public Gson converter;

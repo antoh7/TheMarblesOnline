@@ -15,8 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ru.kbuearpov.themarblesonline.EntryPoint;
 import ru.kbuearpov.themarblesonline.networking.Message;
-import ru.kbuearpov.themarblesonline.networking.constants.MessageType;
 import ru.kbuearpov.themarblesonline.utils.FontGenerator;
+import ru.kbuearpov.themarblesonline.utils.constants.NetConstants;
 
 import static com.badlogic.gdx.Gdx.*;
 import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.*;
@@ -138,15 +138,14 @@ public class VictoryScreen implements Screen {
         restart.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                entryPoint.mightBeRestarted = true;
+                entryPoint.canBeRestarted = true;
 
-                Message message = new Message();
-
-                message.setRoomId(entryPoint.currentRoomId);
-                message.setClientType(entryPoint.clientType);
-                message.setMessageType(MessageType.GAME_IN_PROCESS);
-
-                message.setRestartAvailable(true);
+                Message message = Message.builder()
+                                .roomId(entryPoint.currentRoomId)
+                                .clientType(entryPoint.clientType)
+                                .messageType(NetConstants.GAME_IN_PROCESS)
+                                .restartAvailable(true)
+                                .build();
 
                 entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
 

@@ -22,11 +22,10 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 import ru.kbuearpov.themarblesonline.EntryPoint;
 import ru.kbuearpov.themarblesonline.Player;
 import ru.kbuearpov.themarblesonline.myImpls.SelectBox;
-import ru.kbuearpov.themarblesonline.networking.constants.ClientType;
 import ru.kbuearpov.themarblesonline.networking.Message;
-import ru.kbuearpov.themarblesonline.networking.constants.MessageType;
 import ru.kbuearpov.themarblesonline.utils.FontGenerator;
 import ru.kbuearpov.themarblesonline.utils.GameUtils;
+import ru.kbuearpov.themarblesonline.utils.constants.NetConstants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +36,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.*;
 import static ru.kbuearpov.themarblesonline.utils.constants.GameConstants.*;
 
-
+@SuppressWarnings("SynchronizeOnNonFinalField")
 public class Room implements Screen {
 
     private final EntryPoint entryPoint;
@@ -106,7 +105,7 @@ public class Room implements Screen {
         gameEventThread = new Thread(this::initGameEventListener, "game_event_thread");
         gameEventThread.setDaemon(true);
 
-        if (!entryPoint.mightBeRestarted) {
+        if (!entryPoint.canBeRestarted) {
 
             initTokenArea();
 
@@ -122,13 +121,13 @@ public class Room implements Screen {
             stage.addActor(betSelection);
             stage.addActor(statementSelection);
 
-            if (entryPoint.clientType.equals(ClientType.INITIATOR)) {
+            if (entryPoint.clientType.equals(NetConstants.INITIATOR)) {
                 stage.addActor(tokenLabel);
                 stage.addActor(tokenArea);
             }
 
         } else {
-            if (entryPoint.clientType.equals(ClientType.INITIATOR))
+            if (entryPoint.clientType.equals(NetConstants.INITIATOR))
                 GameUtils.setActorVisible(startButton, true);
         }
 
@@ -186,12 +185,10 @@ public class Room implements Screen {
 
     @Override
     public void pause() {
-
     }
 
     @Override
     public void resume() {
-
     }
 
     @Override
@@ -220,31 +217,31 @@ public class Room implements Screen {
                 switch (messageType) {
 
                     // подсоединение к комнате
-                    case MessageType.ROOM_JOIN -> {
+                    case NetConstants.ROOM_JOIN -> {
                         stage.addActor(startButton);
                         gameState = WAITING_FOR_START;
                     }
 
                     // игра в процессе
-                    case MessageType.GAME_IN_PROCESS -> {
+                    case NetConstants.GAME_IN_PROCESS -> {
                         opponent.setBet(message.getBet());
                         opponent.setMarblesAmount(message.getMarblesAmount());
                         opponent.setStatement(message.getStatement());
 
                         gameState = message.getGameState();
-                        turnCurrent = !message.getTurnOrder();
+                        turnCurrent = !message.isTurnOrder();
 
                         opponentReady = message.isPlayerReady();
 
-                        if (entryPoint.clientType.equals(ClientType.JOINER)
+                        if (entryPoint.clientType.equals(NetConstants.JOINER)
                                 && gameEventThread.getState().equals(Thread.State.WAITING)) {
                             synchronized (gameEventThread) {
                                 gameEventThread.notify();
                             }
                         }
 
-                        if (message.getRestartAvailable()) {
-                            entryPoint.mightBeRestarted = true;
+                        if (message.isRestartAvailable()) {
+                            entryPoint.canBeRestarted = true;
                             gameState = WAITING_FOR_START;
                         }
                     }
@@ -280,10 +277,10 @@ public class Room implements Screen {
                 opponentReady = false;
                 endOfAct = true;
 
-                final int currentMarblesAmount = current.getMarblesAmount();
-                final int opponentMarblesAmount = opponent.getMarblesAmount();
-                final String currentStatement = current.getStatement();
-                final String opponentStatement = opponent.getStatement();
+                int currentMarblesAmount = current.getMarblesAmount();
+                int opponentMarblesAmount = opponent.getMarblesAmount();
+                String currentStatement = current.getStatement();
+                String opponentStatement = opponent.getStatement();
 
                 int currentBet = current.getBet();
                 int opponentBet = opponent.getBet();
@@ -479,7 +476,7 @@ public class Room implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
 
-                if (!betSelection.getForward()) return;
+                if (!betSelection.isForward()) return;
 
                 int bet = betSelection.getSelected();
 
@@ -494,18 +491,16 @@ public class Room implements Screen {
 
                     GameUtils.setActorVisible(betSelection, false);
 
-                    Message message = new Message();
-
-                    message.setRoomId(entryPoint.currentRoomId);
-                    message.setMessageType(MessageType.GAME_IN_PROCESS);
-                    message.setClientType(entryPoint.clientType);
-
-                    message.setGameState(gameState);
-                    message.setTurnOrder(turnCurrent);
-                    message.setPlayerReady(currentReady);
-
-                    message.setBet(current.getBet());
-                    message.setMarblesAmount(current.getMarblesAmount());
+                    Message message = Message.builder()
+                                    .roomId(entryPoint.currentRoomId)
+                                    .messageType(NetConstants.GAME_IN_PROCESS)
+                                    .clientType(entryPoint.clientType)
+                                    .gameState(gameState)
+                                    .turnOrder(turnCurrent)
+                                    .playerReady(currentReady)
+                                    .bet(current.getBet())
+                                    .marblesAmount(current.getMarblesAmount())
+                                    .build();
 
                     entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
 
@@ -548,19 +543,17 @@ public class Room implements Screen {
 
                 betMadeSound.play();
 
-                Message message = new Message();
-
-                message.setRoomId(entryPoint.currentRoomId);
-                message.setMessageType(MessageType.GAME_IN_PROCESS);
-                message.setClientType(entryPoint.clientType);
-
-                message.setGameState(gameState);
-                message.setTurnOrder(turnCurrent);
-                message.setPlayerReady(currentReady);
-
-                message.setBet(current.getBet());
-                message.setMarblesAmount(current.getMarblesAmount());
-                message.setStatement(current.getStatement());
+                Message message = Message.builder()
+                        .roomId(entryPoint.currentRoomId)
+                        .messageType(NetConstants.GAME_IN_PROCESS)
+                        .clientType(entryPoint.clientType)
+                        .gameState(gameState)
+                        .turnOrder(turnCurrent)
+                        .playerReady(currentReady)
+                        .bet(current.getBet())
+                        .marblesAmount(current.getMarblesAmount())
+                        .statement(current.getStatement())
+                        .build();
 
                 entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
 
@@ -578,7 +571,7 @@ public class Room implements Screen {
         opponentHandInstances = new HashMap<>();
         ourHandInstances = new HashMap<>();
 
-        for(int i = 0; i < 11; i++){
+        for(int i = 0; i < 11; i++) {
             opponentHandInstances.put(i, new Image(new Texture(files.internal("textures/op_h_" + i + "_o.png"))));
             ourHandInstances.put(i, new Image(new Texture(files.internal("textures/ou_h_" + i + "_o.png"))));
         }
@@ -588,24 +581,26 @@ public class Room implements Screen {
         marblesHittingSounds = new HashMap<>();
         givingMarblesAwaySounds = new HashMap<>();
 
-        for(int i = 0; i <= 5; i++){
+        for(int i = 0; i <= 5; i++) {
             marblesHittingSounds.put(i, audio.newSound(files.internal("sounds/marbles_hitting_" + i + ".mp3")));
             givingMarblesAwaySounds.put(i, audio.newSound(files.internal("sounds/giving_marbles_away_" + i + ".mp3")));
         }
 
     }
 
-    private void disposeSounds(){
-        for(int i = 0; i < 3; i++){
+    private void disposeSounds() {
+
+        for(int i = 0; i < 3; i++) {
             marblesHittingSounds.get(i).dispose();
             givingMarblesAwaySounds.get(i).dispose();
         }
+
     }
 
 
     // ********************************* методы в процессе игры ********************************
 
-    private boolean checkGameFinished(){
+    private boolean checkGameFinished() {
         // проверка игры на окончание
         if (current.getMarblesAmount() == 0) {
             finishGame();
@@ -628,15 +623,14 @@ public class Room implements Screen {
 
         gameState = GAME_RUNNING;
 
-        Message message = new Message();
-
-        message.setRoomId(entryPoint.currentRoomId);
-        message.setMessageType(MessageType.GAME_IN_PROCESS);
-        message.setClientType(entryPoint.clientType);
-
-        message.setGameState(gameState);
-        message.setTurnOrder(turnCurrent);
-        message.setPlayerReady(currentReady);
+        Message message = Message.builder()
+                .roomId(entryPoint.currentRoomId)
+                .messageType(NetConstants.GAME_IN_PROCESS)
+                .clientType(entryPoint.clientType)
+                .gameState(gameState)
+                .turnOrder(turnCurrent)
+                .playerReady(currentReady)
+                .build();
 
         entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
 
@@ -651,23 +645,21 @@ public class Room implements Screen {
         opponent.setHandVisible(opponent.getPlayerHandOpened(), false);
         betSelection.setItems(GameUtils.computeBetsRange(1, current.getMarblesAmount()));
 
-        if (entryPoint.clientType.equals(ClientType.INITIATOR)) {
+        if (entryPoint.clientType.equals(NetConstants.INITIATOR)) {
             // отправка данных клиенту с типом JOINER
             if (current.getMarblesAmount() == 1) turnCurrent = false;
             else if (opponent.getMarblesAmount() == 1) turnCurrent = true;
             else turnCurrent = !turnCurrent;
 
-            Message message = new Message();
-
-            message.setRoomId(entryPoint.currentRoomId);
-            message.setMessageType(MessageType.GAME_IN_PROCESS);
-            message.setClientType(entryPoint.clientType);
-
-            message.setGameState(gameState);
-            message.setTurnOrder(turnCurrent);
-            message.setPlayerReady(currentReady);
-
-            message.setMarblesAmount(current.getMarblesAmount());
+            Message message = Message.builder()
+                    .roomId(entryPoint.currentRoomId)
+                    .messageType(NetConstants.GAME_IN_PROCESS)
+                    .clientType(entryPoint.clientType)
+                    .gameState(gameState)
+                    .turnOrder(turnCurrent)
+                    .playerReady(currentReady)
+                    .marblesAmount(current.getMarblesAmount())
+                    .build();
 
             entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
 
@@ -692,18 +684,18 @@ public class Room implements Screen {
         opponentReady = false;
         endOfAct = false;
 
-        GameUtils.setActorVisible(current.getPlayerHandOpened(), false);
-        current.setMarblesAmount(5);
-        current.setBet(0);
-        current.setStatement(null);
-
-        GameUtils.setActorVisible(opponent.getPlayerHandOpened(), false);
-        opponent.setMarblesAmount(5);
-        opponent.setBet(0);
-        opponent.setStatement(null);
+        finalizePlayer(opponent);
+        finalizePlayer(current);
 
         betSelection.setItems(GameUtils.computeBetsRange(1, 5));
 
+    }
+
+    private void finalizePlayer(Player player) {
+        GameUtils.setActorVisible(player.getPlayerHandOpened(), false);
+        player.setMarblesAmount(5);
+        player.setBet(0);
+        player.setStatement(null);
     }
 
 }

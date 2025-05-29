@@ -2,5 +2,6 @@
 /desktop/build/
 /android/build/
 /ios/build/
-/.lwjgl
-/.idea
+/.lwjgl/
+/.idea/
+.gradle/

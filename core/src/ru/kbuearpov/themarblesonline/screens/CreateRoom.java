@@ -21,12 +21,10 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 
 import java.io.IOException;
 
-import ru.kbuearpov.themarblesonline.networking.constants.ClientType;
 import ru.kbuearpov.themarblesonline.EntryPoint;
 import ru.kbuearpov.themarblesonline.networking.Message;
-import ru.kbuearpov.themarblesonline.networking.constants.MessageType;
 import ru.kbuearpov.themarblesonline.utils.PreGameStartedUtils;
-import ru.kbuearpov.themarblesonline.utils.constants.PrefsConstants;
+import ru.kbuearpov.themarblesonline.utils.constants.NetConstants;
 
 public class CreateRoom implements Screen {
 
@@ -119,7 +117,7 @@ public class CreateRoom implements Screen {
         });
     }
 
-    private void initCreateButton(){
+    private void initCreateButton() {
         create.setSize(WIDGET_PREFERRED_WIDTH, WIDGET_PREFERRED_HEIGHT);
         create.setPosition((float) WIDTH/2 + create.getWidth()/2, (float) HEIGHT/2 - 60);
 
@@ -133,8 +131,8 @@ public class CreateRoom implements Screen {
                 try {
                     entryPoint.serverConnection = new WebSocketFactory()
                             .createSocket("ws://{}/connection/new".replace(
-                                    "{}", app.getPreferences(PrefsConstants.PREFS_NAME)
-                                            .getString(PrefsConstants.PREFS_KEY)), 7000);
+                                            "{}", app.getPreferences(NetConstants.PREFS_NAME)
+                                                    .getString(NetConstants.PREFS_KEY)), 7000);
                 } catch (IOException | IllegalArgumentException exception) {
                     return;
                 }
@@ -149,16 +147,16 @@ public class CreateRoom implements Screen {
                 buttonPressedSound.play();
                 entryPoint.menuMusic.stop();
 
-                entryPoint.clientType = ClientType.INITIATOR;
+                entryPoint.clientType = NetConstants.INITIATOR;
                 entryPoint.currentRoomId = PreGameStartedUtils.generateRoomId();
 
-                Message createMessage = new Message();
+                Message message = Message.builder()
+                        .roomId(entryPoint.currentRoomId)
+                        .messageType(NetConstants.ROOM_INIT)
+                        .clientType(NetConstants.INITIATOR)
+                        .build();
 
-                createMessage.setRoomId(entryPoint.currentRoomId);
-                createMessage.setMessageType(MessageType.ROOM_INIT);
-                createMessage.setClientType(ClientType.INITIATOR);
-
-                entryPoint.serverConnection.sendText(entryPoint.converter.toJson(createMessage));
+                entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
 
                 entryPoint.setScreen(entryPoint.room);
             }

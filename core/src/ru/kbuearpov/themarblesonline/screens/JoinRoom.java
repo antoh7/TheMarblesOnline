@@ -11,10 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import ru.kbuearpov.themarblesonline.EntryPoint;
-import ru.kbuearpov.themarblesonline.networking.constants.ClientType;
 import ru.kbuearpov.themarblesonline.networking.Message;
-import ru.kbuearpov.themarblesonline.networking.constants.MessageType;
-import ru.kbuearpov.themarblesonline.utils.constants.PrefsConstants;
+import ru.kbuearpov.themarblesonline.utils.constants.NetConstants;
 
 import java.io.IOException;
 
@@ -138,8 +136,8 @@ public class JoinRoom implements Screen {
                 try {
                     entryPoint.serverConnection = new WebSocketFactory()
                             .createSocket("ws://{}/connection/new".replace(
-                                    "{}", app.getPreferences(PrefsConstants.PREFS_NAME)
-                                            .getString(PrefsConstants.PREFS_KEY)), 7000);
+                                    "{}", app.getPreferences(NetConstants.PREFS_NAME)
+                                            .getString(NetConstants.PREFS_KEY)), 7000);
                 } catch (IOException | IllegalArgumentException exception) {
                     return;
                 }
@@ -155,15 +153,15 @@ public class JoinRoom implements Screen {
                 entryPoint.menuMusic.stop();
 
                 entryPoint.currentRoomId = roomIdInput.getText();
-                entryPoint.clientType = ClientType.JOINER;
+                entryPoint.clientType = NetConstants.JOINER;
 
-                Message joinMessage = new Message();
+                Message message = Message.builder()
+                                .roomId(entryPoint.currentRoomId)
+                                .messageType(NetConstants.ROOM_JOIN)
+                                .clientType(NetConstants.JOINER)
+                                .build();
 
-                joinMessage.setRoomId(entryPoint.currentRoomId);
-                joinMessage.setMessageType(MessageType.ROOM_JOIN);
-                joinMessage.setClientType(ClientType.JOINER);
-
-                entryPoint.serverConnection.sendText(entryPoint.converter.toJson(joinMessage));
+                entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
 
                 entryPoint.setScreen(entryPoint.room);
             }
