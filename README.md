@@ -18,9 +18,6 @@
 > Android
 >> * [The_Marbles_Online.apk](https://github.com/antoh7/TheMarblesOnline/releases/tag/android_release)
 
-> Windows
->> * [The_Marbles_Online.exe](https://github.com/antoh7/TheMarblesOnline/releases/tag/desktop_release_exe)
-
 > Windows, Linux, MacOS
 >> * [The_Marbles_Online.jar](https://github.com/antoh7/TheMarblesOnline/releases/tag/desktop_release_jar)
 
