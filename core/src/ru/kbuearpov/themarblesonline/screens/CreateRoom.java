@@ -1,14 +1,14 @@
 package ru.kbuearpov.themarblesonline.screens;
 
 import static com.badlogic.gdx.Gdx.*;
-import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.HEIGHT;
-import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.WIDGET_PREFERRED_HEIGHT;
-import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.WIDGET_PREFERRED_WIDTH;
-import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.WIDTH;
+import static ru.kbuearpov.themarblesonline.utils.constants.DeviceConstants.*;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -16,14 +16,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.neovisionaries.ws.client.WebSocketException;
-import com.neovisionaries.ws.client.WebSocketFactory;
-
-import java.io.IOException;
 
 import ru.kbuearpov.themarblesonline.EntryPoint;
 import ru.kbuearpov.themarblesonline.networking.Message;
-import ru.kbuearpov.themarblesonline.utils.PreGameStartedUtils;
+import ru.kbuearpov.themarblesonline.utils.FontUtils;
+import ru.kbuearpov.themarblesonline.utils.GameUtils;
 import ru.kbuearpov.themarblesonline.utils.constants.NetConstants;
 
 public class CreateRoom implements Screen {
@@ -36,6 +33,11 @@ public class CreateRoom implements Screen {
 
     private final Sound buttonPressedSound;
 
+    private boolean showExceptionMessage;
+    private final BitmapFont exceptionFont;
+    private final GlyphLayout exceptionLayout;
+    private final int indent;
+
     public CreateRoom(EntryPoint entryPoint) {
         this.entryPoint = entryPoint;
         stage = new Stage();
@@ -46,6 +48,10 @@ public class CreateRoom implements Screen {
 
         create = new TextButton("СОЗДАТЬ", new Skin(files.internal("buttons/createbuttonassets/createbuttonskin.json")));
         cancel = new TextButton("ОТМЕНА",new Skin(files.internal("buttons/cancelbuttonassets/cancelbuttonskin.json")));
+
+        exceptionFont = FontUtils.generateFont(files.internal("fonts/defeatFont.otf"), 50, Color.RED, CHARACTERS);
+        exceptionLayout = new GlyphLayout(exceptionFont, "");
+        indent = 20;
 
         initBackground();
         initCancelButton();
@@ -65,10 +71,13 @@ public class CreateRoom implements Screen {
 
     @Override
     public void render(float delta) {
-
         stage.act(delta);
         stage.draw();
-
+        if (showExceptionMessage) {
+            entryPoint.batch.begin();
+            exceptionFont.draw(entryPoint.batch, exceptionLayout, indent, exceptionLayout.height + 5);
+            entryPoint.batch.end();
+        }
     }
 
     @Override
@@ -87,6 +96,7 @@ public class CreateRoom implements Screen {
 
     @Override
     public void hide() {
+        showExceptionMessage = false;
         stage.clear();
         input.setOnscreenKeyboardVisible(false);
     }
@@ -95,6 +105,7 @@ public class CreateRoom implements Screen {
     public void dispose() {
         stage.dispose();
         buttonPressedSound.dispose();
+        exceptionFont.dispose();
     }
 
 
@@ -129,18 +140,11 @@ public class CreateRoom implements Screen {
             public void clicked (InputEvent event, float x, float y) {
 
                 try {
-                    entryPoint.serverConnection = new WebSocketFactory()
-                            .createSocket("ws://{}/connection/new".replace(
-                                            "{}", app.getPreferences(NetConstants.PREFS_NAME)
-                                                    .getString(NetConstants.PREFS_KEY)), 7000);
-                } catch (IOException | IllegalArgumentException exception) {
-                    return;
-                }
-                entryPoint.serverConnection.addHeader("User-Agent", "The-Marbles-Online-Client");
-
-                try {
-                    entryPoint.serverConnection.connect();
-                } catch (WebSocketException webSocketException) {
+                    GameUtils.initServerConnection(entryPoint);
+                } catch (Exception halt) {
+                    String msg = FontUtils.computeBreakPosition(halt.getMessage(), exceptionFont, WIDTH, indent);
+                    exceptionLayout.setText(exceptionFont, msg);
+                    showExceptionMessage = true;
                     return;
                 }
 
@@ -148,7 +152,7 @@ public class CreateRoom implements Screen {
                 entryPoint.menuMusic.stop();
 
                 entryPoint.clientType = NetConstants.INITIATOR;
-                entryPoint.currentRoomId = PreGameStartedUtils.generateRoomId();
+                entryPoint.currentRoomId = GameUtils.generateRoomId();
 
                 Message message = Message.builder()
                         .roomId(entryPoint.currentRoomId)

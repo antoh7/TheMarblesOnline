@@ -2,19 +2,21 @@ package ru.kbuearpov.themarblesonline.screens;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.neovisionaries.ws.client.WebSocketException;
-import com.neovisionaries.ws.client.WebSocketFactory;
+import com.neovisionaries.ws.client.*;
 import ru.kbuearpov.themarblesonline.EntryPoint;
 import ru.kbuearpov.themarblesonline.networking.Message;
+import ru.kbuearpov.themarblesonline.utils.FontUtils;
+import ru.kbuearpov.themarblesonline.utils.GameUtils;
 import ru.kbuearpov.themarblesonline.utils.constants.NetConstants;
-
-import java.io.IOException;
 
 import static com.badlogic.gdx.Gdx.*;
 import static com.badlogic.gdx.Input.OnscreenKeyboardType.Password;
@@ -33,6 +35,11 @@ public class JoinRoom implements Screen {
 
     private final Sound buttonPressedSound;
 
+    private boolean showExceptionMessage;
+    private final BitmapFont exceptionFont;
+    private final GlyphLayout exceptionLayout;
+    private final int indent;
+
     public JoinRoom(EntryPoint entryPoint) {
         this.entryPoint = entryPoint;
 
@@ -46,6 +53,11 @@ public class JoinRoom implements Screen {
         cancel = new TextButton("ОТМЕНА", new Skin(files.internal("buttons/cancelbuttonassets/cancelbuttonskin.json")));
         paste = new TextButton("ВСТАВИТЬ", new Skin(files.internal("buttons/utilbuttonassets/utilbuttonskin.json")));
         roomIdInput = new TextField("ID КОМНАТЫ:", new Skin(files.internal("widgets/inputfield/inputfieldskin.json")));
+
+        exceptionFont = FontUtils.generateFont(files.internal("fonts/defeatFont.otf"), 50, Color.RED, CHARACTERS);
+        exceptionLayout = new GlyphLayout(exceptionFont, "");
+
+        indent = 20;
 
         initBackground();
         initCancelButton();
@@ -70,10 +82,13 @@ public class JoinRoom implements Screen {
 
     @Override
     public void render(float delta) {
-
         stage.act(delta);
         stage.draw();
-
+        if (showExceptionMessage) {
+            entryPoint.batch.begin();
+            exceptionFont.draw(entryPoint.batch, exceptionLayout, indent, exceptionLayout.height + 5);
+            entryPoint.batch.end();
+        }
     }
 
     @Override
@@ -92,6 +107,7 @@ public class JoinRoom implements Screen {
 
     @Override
     public void hide() {
+        showExceptionMessage = false;
         stage.clear();
         input.setOnscreenKeyboardVisible(false);
     }
@@ -100,6 +116,7 @@ public class JoinRoom implements Screen {
     public void dispose() {
         stage.dispose();
         buttonPressedSound.dispose();
+        exceptionFont.dispose();
     }
 
     // ########################### инициализационные методы ############################
@@ -131,21 +148,14 @@ public class JoinRoom implements Screen {
 
         join.addListener(new ClickListener() {
             @Override
-            public void clicked (InputEvent event, float x, float y) {
+            public void clicked(InputEvent event, float x, float y) {
 
                 try {
-                    entryPoint.serverConnection = new WebSocketFactory()
-                            .createSocket("ws://{}/connection/new".replace(
-                                    "{}", app.getPreferences(NetConstants.PREFS_NAME)
-                                            .getString(NetConstants.PREFS_KEY)), 7000);
-                } catch (IOException | IllegalArgumentException exception) {
-                    return;
-                }
-                entryPoint.serverConnection.addHeader("User-Agent", "The-Marbles-Online-Client");
-
-                try {
-                    entryPoint.serverConnection.connect();
-                } catch (WebSocketException webSocketException) {
+                    GameUtils.initServerConnection(entryPoint);
+                } catch (Exception halt) {
+                    String msg = FontUtils.computeBreakPosition(halt.getMessage(), exceptionFont, WIDTH, indent);
+                    exceptionLayout.setText(exceptionFont, msg);
+                    showExceptionMessage = true;
                     return;
                 }
 
@@ -161,9 +171,21 @@ public class JoinRoom implements Screen {
                                 .clientType(NetConstants.JOINER)
                                 .build();
 
-                entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
+                WebSocket response = entryPoint.serverConnection.sendText(entryPoint.converter.toJson(message));
+                response.addListener(new WebSocketAdapter() {
+                    @Override
+                    public void onTextMessage(WebSocket websocket, String text) {
+                        Message responseMsg = entryPoint.converter.fromJson(text, Message.class);
+                        if (!responseMsg.getMessageType().equals("ERROR_OCCURRED")) {
+                            entryPoint.setScreen(entryPoint.room);
+                        } else {
+                            String msg = FontUtils.computeBreakPosition(responseMsg.getNotification(), exceptionFont, WIDTH, indent);
+                            exceptionLayout.setText(exceptionFont, msg);
+                            showExceptionMessage = true;
+                        }
+                    }
+                });
 
-                entryPoint.setScreen(entryPoint.room);
             }
         });
     }

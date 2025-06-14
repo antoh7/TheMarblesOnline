@@ -19,11 +19,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
+import com.neovisionaries.ws.client.WebSocketFrame;
 import ru.kbuearpov.themarblesonline.EntryPoint;
 import ru.kbuearpov.themarblesonline.Player;
 import ru.kbuearpov.themarblesonline.myImpls.SelectBox;
 import ru.kbuearpov.themarblesonline.networking.Message;
-import ru.kbuearpov.themarblesonline.utils.FontGenerator;
+import ru.kbuearpov.themarblesonline.utils.FontUtils;
 import ru.kbuearpov.themarblesonline.utils.GameUtils;
 import ru.kbuearpov.themarblesonline.utils.constants.NetConstants;
 
@@ -61,6 +62,11 @@ public class Room implements Screen {
     private String gameState;
 
     private boolean turnCurrent, endOfAct, currentReady, opponentReady;
+    private volatile boolean showExceptionMessage;
+
+    private final BitmapFont exceptionFont;
+    private final GlyphLayout exceptionLayout;
+    private final int indent;
 
     public Room(EntryPoint entryPoint){
         this.entryPoint = entryPoint;
@@ -69,7 +75,7 @@ public class Room implements Screen {
 
         gameState = WAITING_FOR_PLAYER_CONNECT;
 
-        indicatorFont = FontGenerator.generateFont(files.internal("fonts/indicatorFont.ttf"), 80, Color.ROYAL, CHARACTERS);
+        indicatorFont = FontUtils.generateFont(files.internal("fonts/indicatorFont.ttf"), 80, Color.ROYAL, CHARACTERS);
 
         marblesAmountLayout = new GlyphLayout();
         turnLayout = new GlyphLayout();
@@ -92,6 +98,11 @@ public class Room implements Screen {
         opponent = new Player(new Image((new Texture(files.internal("textures/op_h_c.png")))),
                 new Image(), 0, HEIGHT - Player.getDefaultHandHeight());
 
+        exceptionFont = FontUtils.generateFont(files.internal("fonts/defeatFont.otf"), 50, Color.RED, CHARACTERS);
+        exceptionLayout = new GlyphLayout(exceptionFont, "");
+
+        indent = 20;
+
         initBackground();
         initTokenLabel();
         initStartButton();
@@ -106,7 +117,6 @@ public class Room implements Screen {
         gameEventThread.setDaemon(true);
 
         if (!entryPoint.canBeRestarted) {
-
             initTokenArea();
 
             initWebSocketListener(entryPoint.serverConnection);
@@ -145,8 +155,8 @@ public class Room implements Screen {
 
         // отрисовка рук
         if (gameState.equals(GAME_RUNNING)) {
-            String text;
 
+            String text;
             synchronized (this) {
                 text = turnCurrent ? "Твой ход" : "Ход соперника";
             }
@@ -156,6 +166,8 @@ public class Room implements Screen {
 
             indicatorFont.draw(entryPoint.batch, turnLayout, (float) WIDTH/6 - turnLayout.width/2, turnLayout.height + 10);
             indicatorFont.draw(entryPoint.batch, marblesAmountLayout, (float) WIDTH/6*5 - marblesAmountLayout.width/2, turnLayout.height + 10);
+            if (showExceptionMessage)
+                exceptionFont.draw(entryPoint.batch, exceptionLayout, indent, HEIGHT - 35);
 
             if (!gameEventThread.isAlive())
                 gameEventThread.start();
@@ -193,6 +205,7 @@ public class Room implements Screen {
 
     @Override
     public void hide() {
+        showExceptionMessage = false;
     }
 
     @Override
@@ -200,6 +213,7 @@ public class Room implements Screen {
         stage.dispose();
         betMadeSound.dispose();
         indicatorFont.dispose();
+        exceptionFont.dispose();
 
         disposeSounds();
     }
@@ -208,6 +222,7 @@ public class Room implements Screen {
     // ################################## слушатель сети #################################
 
     private void initWebSocketListener(WebSocket client) {
+        client.clearListeners();
         client.addListener(new WebSocketAdapter() {
             @Override
             public void onTextMessage(WebSocket websocket, String text) {
@@ -229,8 +244,8 @@ public class Room implements Screen {
                         opponent.setStatement(message.getStatement());
 
                         gameState = message.getGameState();
+                        // инверсия boolean значения для получения актуального значения очереди хода
                         turnCurrent = !message.isTurnOrder();
-
                         opponentReady = message.isPlayerReady();
 
                         if (entryPoint.clientType.equals(NetConstants.JOINER)
@@ -249,6 +264,12 @@ public class Room implements Screen {
                 }
             }
 
+            @Override
+            public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame,
+                                       WebSocketFrame clientCloseFrame, boolean closedByServer) {
+                exceptionLayout.setText(exceptionFont, "Соединение с сервером было закрыто");
+                showExceptionMessage = true;
+            }
         });
     }
 
@@ -256,13 +277,13 @@ public class Room implements Screen {
 
     private void initGameEventListener() {
 
+        // event loop
         while (true) {
 
             synchronized (this) {
                 if (turnCurrent && !currentReady)
                     GameUtils.setActorVisible(betSelection, true);
             }
-
             synchronized (this) {
                 if (!turnCurrent && opponentReady && !currentReady)
                     GameUtils.setActorVisible(betSelection, true);
@@ -670,7 +691,8 @@ public class Room implements Screen {
                     gameEventThread.wait();
                 }
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                exceptionLayout.setText(exceptionFont, "Игровой обработчик событий был прерван");
+                showExceptionMessage = true;
             }
         }
     }

@@ -7,6 +7,8 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 // run with -XstartOnFirstThread JVM arg on macOS
 public class DesktopLauncher {
 	public static void main (String[] arg) {
+		System.out.println("App started with PID: " + ProcessHandle.current().pid());
+
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 
 		config.setForegroundFPS(60);

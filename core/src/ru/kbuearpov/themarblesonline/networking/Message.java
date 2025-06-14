@@ -27,4 +27,7 @@ public class Message {
     private int bet;
     private String statement;
 
+    // ********** служебное сообщение **********
+    private String notification;
+
 }

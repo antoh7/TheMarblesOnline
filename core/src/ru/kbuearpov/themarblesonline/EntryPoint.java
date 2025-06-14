@@ -9,12 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.google.gson.Gson;
 import com.neovisionaries.ws.client.WebSocket;
 
-import ru.kbuearpov.themarblesonline.screens.CreateRoom;
-import ru.kbuearpov.themarblesonline.screens.DefeatScreen;
-import ru.kbuearpov.themarblesonline.screens.JoinRoom;
-import ru.kbuearpov.themarblesonline.screens.MainMenu;
-import ru.kbuearpov.themarblesonline.screens.Room;
-import ru.kbuearpov.themarblesonline.screens.VictoryScreen;
+import ru.kbuearpov.themarblesonline.screens.*;
 
 public class EntryPoint extends Game {
 

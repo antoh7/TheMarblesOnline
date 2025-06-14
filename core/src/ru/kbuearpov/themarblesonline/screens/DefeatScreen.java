@@ -15,7 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ru.kbuearpov.themarblesonline.EntryPoint;
 import ru.kbuearpov.themarblesonline.networking.Message;
-import ru.kbuearpov.themarblesonline.utils.FontGenerator;
+import ru.kbuearpov.themarblesonline.utils.FontUtils;
 import ru.kbuearpov.themarblesonline.utils.constants.NetConstants;
 
 import static com.badlogic.gdx.Gdx.*;
@@ -46,7 +46,7 @@ public class DefeatScreen implements Screen {
         exit = new TextButton("ВЫЙТИ", new Skin(files.internal("buttons/utilbuttonassets/utilbuttonskin.json")));
         restart = new TextButton("ЗАНОВО", new Skin(files.internal("buttons/utilbuttonassets/utilbuttonskin.json")));
 
-        defeatFont = FontGenerator.generateFont(files.internal("fonts/defeatFont.otf"), 160, Color.FIREBRICK, CHARACTERS);
+        defeatFont = FontUtils.generateFont(files.internal("fonts/defeatFont.otf"), 160, Color.FIREBRICK, CHARACTERS);
 
         defeatLayout = new GlyphLayout(defeatFont, "ТЫ ПРОИГРАЛ!");
 
@@ -60,7 +60,6 @@ public class DefeatScreen implements Screen {
 
     @Override
     public void show() {
-
         stage.addActor(background);
         stage.addActor(restart);
         stage.addActor(exit);
@@ -72,15 +71,10 @@ public class DefeatScreen implements Screen {
 
     @Override
     public void render(float delta) {
-
         stage.act(delta);
-
         stage.draw();
-
         entryPoint.batch.begin();
-
         defeatFont.draw(entryPoint.batch, defeatLayout, (float) WIDTH/2 - defeatLayout.width/2, (float) HEIGHT/2 + defeatLayout.height*2);
-
         entryPoint.batch.end();
     }
 

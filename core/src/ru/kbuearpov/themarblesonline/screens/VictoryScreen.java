@@ -15,7 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ru.kbuearpov.themarblesonline.EntryPoint;
 import ru.kbuearpov.themarblesonline.networking.Message;
-import ru.kbuearpov.themarblesonline.utils.FontGenerator;
+import ru.kbuearpov.themarblesonline.utils.FontUtils;
 import ru.kbuearpov.themarblesonline.utils.constants.NetConstants;
 
 import static com.badlogic.gdx.Gdx.*;
@@ -46,7 +46,7 @@ public class VictoryScreen implements Screen {
         exit = new TextButton("ВЫЙТИ", new Skin(files.internal("buttons/utilbuttonassets/utilbuttonskin.json")));
         restart = new TextButton("ЗАНОВО", new Skin(files.internal("buttons/utilbuttonassets/utilbuttonskin.json")));
 
-        victoryFont = FontGenerator.generateFont(files.internal("fonts/victoryFont.ttf"), 160, Color.CYAN, CHARACTERS);
+        victoryFont = FontUtils.generateFont(files.internal("fonts/victoryFont.ttf"), 160, Color.CYAN, CHARACTERS);
 
         victoryLayout = new GlyphLayout(victoryFont, "ПОБЕДА!");
 
